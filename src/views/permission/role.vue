@@ -3,7 +3,7 @@
     <!-- 权限分配页面 -->
     <el-button type="primary" @click="handleAddRole">新增用户</el-button>
     <el-table :data="rolesList" style="width: 100%;margin-top:30px;" border>
-      <el-table-column align="center" label="用户标识" width="220">
+      <el-table-column align="center" label="权限类型" width="220">
         <template slot-scope="scope">
           {{ scope.row.key }}
         </template>
@@ -32,7 +32,7 @@
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">编辑</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
-          <el-button type="primary" size="small" @click="handleDelete(scope)">重置密码</el-button>
+          <!-- <el-button type="primary" size="small" @click="handleDelete(scope)">重置密码</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -40,13 +40,28 @@
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'编辑用户':'新建用户'">
       <el-form :model="role" label-width="80px" label-position="left">
         <el-form-item label="角色">
-          <el-input v-model="role.key" placeholder="角色下拉框" />
+          <!-- <el-input v-model="role.key" placeholder="角色下拉框" /> -->
+          <el-dropdown>
+            <el-button type="primary" v-model="role.key">
+              角色<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>admin</el-dropdown-item>
+              <el-dropdown-item>developer</el-dropdown-item>
+              <el-dropdown-item>worker</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-form-item>
         <el-form-item label="工号">
           <el-input v-model="role.number" placeholder="工号" />
         </el-form-item>
         <el-form-item label="手机号">
           <el-input v-model="role.phone" placeholder="手机号" />
+          <el-button type="primary" size="small" @click="handleDelete(scope)">解除绑定</el-button>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="role.phone" placeholder="手机号" />
+          <el-button type="primary" size="small" @click="handleDelete(scope)">重置密码</el-button>
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
