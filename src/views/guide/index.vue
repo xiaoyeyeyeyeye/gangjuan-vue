@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="app-container">
     <aside>
       The guide page is useful for some people who entered the project for the first time. You can briefly introduce the
@@ -33,4 +33,4 @@ export default {
     }
   }
 }
-</script>
+</script> -->

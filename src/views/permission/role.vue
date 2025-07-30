@@ -42,8 +42,8 @@
         <el-form-item label="角色">
           <!-- <el-input v-model="role.key" placeholder="角色下拉框" /> -->
           <el-dropdown>
-            <el-button type="primary" v-model="role.key">
-              角色<i class="el-icon-arrow-down el-icon--right"></i>
+            <el-button v-model="role.key" type="primary">
+              角色<i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>admin</el-dropdown-item>
