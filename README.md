@@ -241,3 +241,12 @@ Modern browsers and Internet Explorer 10+.
 [MIT](https://github.com/PanJiaChen/vue-element-admin/blob/master/LICENSE)
 
 Copyright (c) 2017-present PanJiaChen
+
+
+1.自动改对格式
+npm run lint -- --fix
+
+2.推送代码
+git add .
+git commit -m "你的提交说明"
+git push
