@@ -10,12 +10,16 @@
         <el-form-item label="工号">
           <el-input v-model="role.number" placeholder="工号" disabled />
         </el-form-item>
+        <el-form-item label="姓名">
+          <el-input v-model="role.phone" placeholder="姓名" disabled />
+          <el-button type="primary" size="small" @click="handleDelete(scope)">修改</el-button>
+        </el-form-item>
         <el-form-item label="手机号">
-          <el-input v-model="role.phone" placeholder="手机号" />
+          <el-input v-model="role.phone" placeholder="手机号" disabled />
           <el-button type="primary" size="small" @click="handleDelete(scope)">解除绑定</el-button>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="role.phone" placeholder="手机号" />
+          <el-input v-model="role.phone" placeholder="手机号" disabled />
           <el-button type="primary" size="small" @click="handleDelete(scope)">重置密码</el-button>
         </el-form-item>
       </el-form>

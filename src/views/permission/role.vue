@@ -13,6 +13,11 @@
           {{ scope.row.number }}
         </template>
       </el-table-column>
+      <el-table-column align="center" label="姓名" width="220">
+        <template slot-scope="scope">
+          {{ scope.row.number }}
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="手机号" width="220">
         <template slot-scope="scope">
           {{ scope.row.phone }}
