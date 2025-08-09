@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
     <!-- 权限分配页面 -->
+    <div style="margin:0 0 5px 20px; font-size: 24px;">
+      权限分配
+    </div>
+    <aside>
+      管理员可以查看账户信息，并进行账户信息更改、手机解绑、密码重置等操作。
+    </aside>
     <el-button type="primary" @click="handleAddRole">新增用户</el-button>
     <el-table :data="rolesList" style="width: 100%;margin-top:30px;" border>
       <el-table-column align="center" label="权限类型" width="220">

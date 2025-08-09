@@ -74,7 +74,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/entry-management/index'),
+        component: () => import('@/views/entry-management'),
         name: 'Icons',
         meta: { title: '入库管理', icon: 'el-icon-finished', noCache: true }
       }
@@ -87,21 +87,21 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/outbound-management/index'),
+        component: () => import('@/views/outbound-management'),
         name: 'PDF',
         meta: { title: '出库管理', icon: 'el-icon-upload2', noCache: true }
       }
     ]
   },
   {
-    path: '/theme',
+    path: '/overview',
     component: Layout,
     children: [
       {
         path: 'index',
-        component: () => import('@/views/theme/index'),
+        component: () => import('@/views/overview-inventory'),
         name: 'Theme',
-        meta: { title: '库存总览（包含查找与修改与二维码补打', icon: 'el-icon-s-cooperation', noCache: true }
+        meta: { title: '库存总览', icon: 'el-icon-s-cooperation', noCache: true }
       }
     ]
   },
@@ -118,13 +118,13 @@ export const constantRoutes = [
     children: [
       {
         path: 'create',
-        component: () => import('@/views/example/create'),
+        component: () => import('@/views/operation-log'),
         name: 'CreateArticle',
         meta: { title: '操作日志', noCache: true }
       },
       {
         path: 'list',
-        component: () => import('@/views/example/list'),
+        component: () => import('@/views/alarm'),
         name: 'ArticleList',
         meta: { title: '告警通知', noCache: true }
       }
