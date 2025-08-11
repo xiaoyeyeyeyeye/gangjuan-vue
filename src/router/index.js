@@ -69,6 +69,18 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/overview',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/overview-inventory'),
+        name: 'Theme',
+        meta: { title: '库存总览', icon: 'el-icon-s-cooperation', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/entry',
     component: Layout,
     children: [
@@ -93,19 +105,6 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/overview',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/overview-inventory'),
-        name: 'Theme',
-        meta: { title: '库存总览', icon: 'el-icon-s-cooperation', noCache: true }
-      }
-    ]
-  },
-
   {
     path: '/example',
     component: Layout,

@@ -53,40 +53,42 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入库时间" width="150px" align="center">
+      <el-table-column label="入库时间" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.created_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="钢卷编号" min-width="150px">
+      <el-table-column label="钢卷编号" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.coil_no }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作人" width="110px" align="center">
+      <el-table-column label="操作人" min-width="110px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.author }}</span>
         </template>
         <!-- 这里记住更新一个与设备操作人员、数据库人员同步的操作人表格在后端！！ -->
       </el-table-column>
-      <el-table-column label="厂家" width="80px">
+      <el-table-column label="厂家" min-width="80px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.manufacture }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" align="center" width="95">
+      <el-table-column label="规格" align="center" min-width="110">
         <template slot-scope="{row}">
           <span>{{ row.size }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入库位置" align="center" width="95">
+      <el-table-column label="入库位置" align="center" min-width="100">
         <template slot-scope="{row}">
           <span>{{ row.location }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
-          <span>{{ row.status }}</span>
+          <el-tag :type="row.status | statusFilter">
+            {{ row.status }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
@@ -176,9 +178,9 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        t: 'success',
+        o: 'info',
+        f: 'danger'
       }
       return statusMap[status]
     },
@@ -194,7 +196,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         importance: undefined,
         title: undefined,
         type: undefined,

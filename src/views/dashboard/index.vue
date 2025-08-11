@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+// import { mapGetters } from 'vuex'
 import adminDashboard from './admin'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -16,17 +16,8 @@ export default {
   components: { adminDashboard },
   data() {
     return {
-      currentRole: 'adminDashboard',
       coilMeshes: [],
       selectedCoil: null
-    }
-  },
-  computed: {
-    ...mapGetters(['roles'])
-  },
-  created() {
-    if (!this.roles.includes('admin')) {
-      this.currentRole = 'editorDashboard'
     }
   },
   mounted() {

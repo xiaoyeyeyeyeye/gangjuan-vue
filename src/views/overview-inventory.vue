@@ -5,7 +5,7 @@
         库存总览
       </div>
       <aside>
-        可以查找与修改库存钢卷。
+        可以查看钢卷全部信息，修改基本钢卷。
         支持钢卷二维码补打。
       </aside>
       <el-input v-model="listQuery.title" placeholder="钢卷编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
@@ -38,6 +38,8 @@
       </el-checkbox> -->
     </div>
 
+    <div ref="container" style="width: 100%; height: 40vh;" />
+
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -53,46 +55,132 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入库时间" width="150px" align="center">
+      <el-table-column label="入库时间" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.created_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="钢卷编号" min-width="150px">
+      <el-table-column label="钢卷编号" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.coil_no }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作人" width="110px" align="center">
+      <el-table-column label="操作人" min-width="110px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.author }}</span>
         </template>
         <!-- 这里记住更新一个与设备操作人员、数据库人员同步的操作人表格在后端！！ -->
       </el-table-column>
-      <el-table-column label="厂家" width="80px">
+      <el-table-column label="厂家" min-width="80px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.manufacture }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" align="center" width="95">
+      <el-table-column label="钢卷规格" align="center" min-width="110">
         <template slot-scope="{row}">
           <span>{{ row.size }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入库位置" align="center" width="95">
+      <el-table-column label="入库位置" align="center" min-width="100">
         <template slot-scope="{row}">
           <span>{{ row.location }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="当前状态" class-name="status-col" width="100">
+      <el-table-column label="当前状态" class-name="status-col" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.status }}</span>
+          <el-tag :type="row.status | statusFilter">
+            {{ row.status }}
+          </el-tag>
         </template>
       </el-table-column>
+
+
+
+      <el-table-column label="钢卷名称" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="钢卷牌号" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.grade }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="钢卷牌号" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.grade }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品标准" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.standard }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="熔炼号" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.heat_no }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品等级" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.coil_class }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="钢卷重量（吨）" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.weight }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="钢卷重量（kg）" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.weight }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="合同号" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.contract_no }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="到站" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.destination }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="生产日期" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.date }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="钢卷生产厂家编号" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.coil_no_manufacturers }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="最终用户" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.consumer }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注信息" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.remark }}</span>
+        </template>
+      </el-table-column>
+
+
+
+
+
+
+
+
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
+          </el-button>
+          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
+            二维码补打
           </el-button>
         </template>
       </el-table-column>
@@ -152,6 +240,8 @@ import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -173,9 +263,9 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        t: 'success',
+        o: 'info',
+        f: 'danger'
       }
       return statusMap[status]
     },
@@ -185,13 +275,17 @@ export default {
   },
   data() {
     return {
+      currentRole: 'adminDashboard',
+      coilMeshes: [],
+      selectedCoil: null,
+
       tableKey: 0,
       list: null,
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         importance: undefined,
         title: undefined,
         type: undefined,
@@ -230,7 +324,127 @@ export default {
   created() {
     this.getList()
   },
+  mounted() {
+    this.initThreeScene()
+  },
   methods: {
+    initThreeScene() {
+      const container = this.$refs.container
+      const scene = new THREE.Scene()
+      scene.background = new THREE.Color(0xf0f0f0)
+
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000)
+      camera.position.set(120, 150, 250) // ✅ 向上抬高并稍微拉远
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true })
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      container.appendChild(renderer.domElement)
+
+      const controls = new OrbitControls(camera, renderer.domElement)
+      controls.enableDamping = true
+      controls.maxPolarAngle = Math.PI / 2.2
+      controls.minDistance = 100
+      controls.maxDistance = 400
+      controls.enablePan = false
+
+      // 光照
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
+      scene.add(ambientLight)
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6)
+      directionalLight.position.set(100, 100, 100)
+      scene.add(directionalLight)
+
+      // 地板
+      const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(1000, 1000),
+        new THREE.MeshStandardMaterial({ color: 0xdddddd })
+      )
+      floor.rotation.x = -Math.PI / 2
+      scene.add(floor)
+
+      // 添加钢卷
+      const coils = this.generateMockCoils()
+      this.coilMeshes = this.addSteelCoils(coils, scene)
+
+      // 点击监听器
+      const raycaster = new THREE.Raycaster()
+      const mouse = new THREE.Vector2()
+
+      renderer.domElement.addEventListener('click', (event) => {
+        const rect = renderer.domElement.getBoundingClientRect()
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
+
+        raycaster.setFromCamera(mouse, camera)
+        const intersects = raycaster.intersectObjects(this.coilMeshes)
+
+        if (intersects.length > 0) {
+          const selected = intersects[0].object
+
+          // 恢复上一个颜色
+          if (this.selectedCoil && this.selectedCoil !== selected) {
+            this.selectedCoil.material.color.set(0x607d8b)
+          }
+
+          // 选中新颜色
+          selected.material.color.set(0xff0000)
+          this.selectedCoil = selected
+
+          // 显示信息
+          alert(`钢卷 ID: ${selected.userData.id}`)
+        } else {
+          // 点击空白处，取消选中
+          if (this.selectedCoil) {
+            this.selectedCoil.material.color.set(0x607d8b)
+            this.selectedCoil = null
+          }
+        }
+      })
+
+      const animate = () => {
+        requestAnimationFrame(animate)
+        controls.update()
+        renderer.render(scene, camera)
+      }
+
+      animate()
+    },
+
+    generateMockCoils() {
+      const data = []
+      for (let col = 0; col < 4; col++) {
+        for (let row = 0; row < 10; row++) {
+          for (let layer = 0; layer < 3; layer++) {
+            data.push({
+              id: `${col}-${row}-${layer}`,
+              x: col * 30,
+              y: layer * 25,
+              z: row * 30
+            })
+          }
+        }
+      }
+      return data
+    },
+
+    addSteelCoils(data, scene) {
+      const geometry = new THREE.CylinderGeometry(10, 10, 20, 32)
+      const meshes = []
+
+      for (const coil of data) {
+        const material = new THREE.MeshStandardMaterial({ color: 0x607d8b })
+        const mesh = new THREE.Mesh(geometry, material)
+        mesh.position.set(coil.x, coil.y + 10, coil.z)
+        mesh.rotation.x = Math.PI / 2
+        mesh.userData.id = coil.id
+        scene.add(mesh)
+        meshes.push(mesh)
+      }
+
+      return meshes
+    },
+
+
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {

@@ -9,15 +9,14 @@ const image_uri = 'https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70
 for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
     id: '@increment',
-    
     created_at: '@datetime("yyyy-MM-dd HH:mm:ss")',
     coil_no: '@string("upper", 2)@string("number", 4)-@string("number", 5)', // 模拟钢卷编号
     manufacture: '@pick(["宝钢", "鞍钢", "首钢", "马钢", "沙钢"])', // 模拟厂家
     size: '@float(0.5, 5, 1, 2)mm × @integer(500, 2000)mm', // 模拟规格
     location: '@pick(["A1", "A2", "B1", "B2", "C3", "D5"])', // 模拟入库位置
-    status: '@pick(["在库", "出库", "待检", "作废"])', // 模拟状态
+    status: '@pick(["t", "f", "o"])', // 模拟状态
 
-
+    
     timestamp: +Mock.Random.date('T'),
     author: '@first',
     reviewer: '@first',
@@ -25,9 +24,9 @@ for (let i = 0; i < count; i++) {
     content_short: 'mock data',
     content: baseContent,
     forecast: '@float(0, 100, 2, 2)',
-    importance: '@integer(1, 3)',
-    'type|1': ['CN', 'US', 'JP', 'EU'],
-    'status|1': ['published', 'draft'],
+    // importance: '@integer(1, 3)',
+    // 'type|1': ['CN', 'US', 'JP', 'EU'],
+    // 'status|1': ['published', 'draft'],
     display_time: '@datetime',
     comment_disabled: true,
     pageviews: '@integer(300, 5000)',
