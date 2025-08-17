@@ -94,8 +94,6 @@
         </template>
       </el-table-column>
 
-
-
       <el-table-column label="钢卷名称" align="center" min-width="100">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
@@ -166,13 +164,6 @@
           <span>{{ row.remark }}</span>
         </template>
       </el-table-column>
-
-
-
-
-
-
-
 
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
@@ -443,7 +434,6 @@ export default {
 
       return meshes
     },
-
 
     getList() {
       this.listLoading = true
