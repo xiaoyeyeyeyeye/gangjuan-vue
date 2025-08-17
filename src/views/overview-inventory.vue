@@ -5,7 +5,7 @@
         库存总览
       </div>
       <aside>
-        可以查看钢卷全部信息，修改基本钢卷。
+        可以查看钢卷全部信息，修改基本钢卷信息。
         支持钢卷二维码补打。
       </aside>
       <el-input v-model="listQuery.title" placeholder="钢卷编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
@@ -21,24 +21,15 @@
       <el-select v-model="listQuery.type" placeholder="操作人" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
       </el-select>
-      <!-- <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
-      </el-select> -->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查找
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
-      <!-- <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        Export
-      </el-button> -->
-      <!-- <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
-        reviewer
-      </el-checkbox> -->
     </div>
 
-    <div ref="container" style="width: 100%; height: 40vh;" />
+    <!-- <div ref="container" style="width: 100%; height: 40vh;" /> -->
 
     <el-table
       :key="tableKey"
@@ -76,7 +67,7 @@
           <span>{{ row.manufacture }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="钢卷规格" align="center" min-width="110">
+      <el-table-column label="钢卷规格" align="center" min-width="150">
         <template slot-scope="{row}">
           <span>{{ row.size }}</span>
         </template>
@@ -129,7 +120,7 @@
           <span>{{ row.weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="钢卷重量（kg）" align="center" min-width="100">
+      <el-table-column label="钢卷重量（千克）" align="center" min-width="100">
         <template slot-scope="{row}">
           <span>{{ row.weight }}</span>
         </template>
@@ -179,50 +170,149 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Type" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Date" prop="timestamp">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
-        </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Imp">
-          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
-        </el-form-item>
-        <el-form-item label="Remark">
-          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
-        </el-form-item>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="880px">
+      <el-form ref="dataForm" :rules="rules" :model="temp" class="two-column-form" label-position="left" label-width="120px">
+        <!-- 两列布局开始 -->
+        <el-row :gutter="24" type="flex" wrap>
+          <el-col :span="12">
+            <el-form-item label="入库时间" prop="timestamp">
+              <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="钢卷编号" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="操作人" prop="type">
+              <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
+                <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="厂家" prop="type">
+              <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
+                <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="钢卷规格" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="入库位置" prop="type">
+              <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
+                <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="当前状态" prop="type">
+              <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
+                <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="钢卷名称" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="钢卷牌号" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="产品标准" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="熔炼号" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="产品等级" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="钢卷重量（吨）" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="钢卷重量（千克）" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="合同号" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="到站" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="生产日期" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="钢卷生产厂家编号" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="最终用户" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="备注信息" prop="title">
+              <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          Cancel
+          取消
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
+          确认
         </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
-    </el-dialog>
+    <!-- 还需要做一个二维码补打 -->
   </div>
 </template>
 
@@ -299,8 +389,8 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: '编辑',
+        create: '新增'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -539,12 +629,12 @@ export default {
     },
     handleDelete(row, index) {
       this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
+        title: '二维码补打',
+        message: '生成二维码，唤起打印任务',
         type: 'success',
         duration: 2000
       })
-      this.list.splice(index, 1)
+      // this.list.splice(index, 1)
     },
     handleFetchPv(pv) {
       fetchPv(pv).then(response => {
@@ -582,3 +672,19 @@ export default {
   }
 }
 </script>
+<style scoped>
+.two-column-form .el-row {
+  flex-wrap: wrap;
+}
+
+.two-column-form .el-col {
+  min-width: 300px; /* 最小宽度，防止太窄换行 */
+}
+
+/* 表单最大高度自动滚动，而不是整个 dialog 出现滚动条 */
+.el-dialog__body {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden; /* 禁止横向滚动 */
+}
+</style>

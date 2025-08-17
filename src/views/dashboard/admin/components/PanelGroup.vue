@@ -2,7 +2,7 @@
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
-        <div class="card-panel-icon-wrapper icon-people">
+        <div class="card-panel-icon-wrapper icon-in">
           <svg-icon icon-class="exit-fullscreen" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
@@ -15,7 +15,7 @@
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('messages')">
-        <div class="card-panel-icon-wrapper icon-message">
+        <div class="card-panel-icon-wrapper icon-out">
           <svg-icon icon-class="fullscreen" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
@@ -28,7 +28,7 @@
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('purchases')">
-        <div class="card-panel-icon-wrapper icon-money">
+        <div class="card-panel-icon-wrapper icon-all">
           <svg-icon icon-class="tab" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
@@ -41,7 +41,7 @@
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('shoppings')">
-        <div class="card-panel-icon-wrapper icon-shopping">
+        <div class="card-panel-icon-wrapper icon-error">
           <svg-icon icon-class="bug" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
@@ -75,7 +75,7 @@ export default {
   margin-top: 18px;
 
   .card-panel-col {
-    margin-bottom: 32px;
+    margin-bottom: 16px;
   }
 
   .card-panel {
@@ -94,37 +94,37 @@ export default {
         color: #fff;
       }
 
-      .icon-people {
+      .icon-in {
         background: #40c9c6;
       }
 
-      .icon-message {
+      .icon-out {
         background: #36a3f7;
       }
 
-      .icon-money {
-        background: #f4516c;
+      .icon-all {
+        background: #34bfa3;
       }
 
-      .icon-shopping {
-        background: #34bfa3
+      .icon-error {
+        background: #f4516c;
       }
     }
 
-    .icon-people {
+    .icon-in {
       color: #40c9c6;
     }
 
-    .icon-message {
+    .icon-out {
       color: #36a3f7;
     }
 
-    .icon-money {
-      color: #f4516c;
+    .icon-all {
+      color: #34bfa3;
     }
 
-    .icon-shopping {
-      color: #34bfa3
+    .icon-error {
+      color: #f4516c;
     }
 
     .card-panel-icon-wrapper {
@@ -137,7 +137,7 @@ export default {
 
     .card-panel-icon {
       float: left;
-      font-size: 48px;
+      font-size: 52px;
     }
 
     .card-panel-description {
@@ -149,12 +149,12 @@ export default {
       .card-panel-text {
         line-height: 18px;
         color: rgba(0, 0, 0, 0.45);
-        font-size: 16px;
+        font-size: 20px;
         margin-bottom: 12px;
       }
 
       .card-panel-num {
-        font-size: 20px;
+        font-size: 28px;
       }
     }
   }
