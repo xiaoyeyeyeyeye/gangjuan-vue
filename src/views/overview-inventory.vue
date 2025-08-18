@@ -41,9 +41,14 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="序号" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <!-- <el-table-column label="序号" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
+        </template>
+      </el-table-column> -->
+      <el-table-column label="序号" align="center" width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
       <el-table-column label="入库时间" min-width="150px" align="center">
@@ -56,12 +61,6 @@
           <span>{{ row.coil_no }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="操作人" min-width="110px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
-        </template>
-        这里记住更新一个与设备操作人员、数据库人员同步的操作人表格在后端！
-      </el-table-column> -->
       <el-table-column label="厂家" min-width="80px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.manufacture_id }}</span>
@@ -72,9 +71,14 @@
           <span>{{ row.coil_size }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="当前位置" align="center" min-width="320">
+      <el-table-column label="当前位置" align="center" min-width="180">
         <template slot-scope="{row}">
           <span>{{ row.location_id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="当前坐标" align="center" min-width="130">
+        <template slot-scope="{row}">
+          <span>{{ row.location_xyz }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前状态" class-name="status-col" min-width="100">
@@ -145,11 +149,6 @@
           <span>{{ row.date_production }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="钢卷生产厂家编号" align="center" min-width="100">
-        <template slot-scope="{row}">
-          <span>{{ row.coil_no_manufacturers }}</span>
-        </template>
-      </el-table-column> -->
       <el-table-column label="最终用户" align="center" min-width="170">
         <template slot-scope="{row}">
           <span>{{ row.consumer }}</span>
@@ -674,11 +673,11 @@ export default {
           return v[j]
         }
       }))
-    },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
     }
+    // getSortClass: function(key) {
+    //   const sort = this.listQuery.sort
+    //   return sort === `+${key}` ? 'ascending' : 'descending'
+    // }
   }
 }
 </script>
