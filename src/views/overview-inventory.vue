@@ -41,14 +41,14 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column label="序号" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="入库时间" min-width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.created_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.entry_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷编号" min-width="150px" align="center">
@@ -56,25 +56,25 @@
           <span>{{ row.coil_no }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作人" min-width="110px" align="center">
+      <!-- <el-table-column label="操作人" min-width="110px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.author }}</span>
         </template>
-        <!-- 这里记住更新一个与设备操作人员、数据库人员同步的操作人表格在后端！！ -->
-      </el-table-column>
+        这里记住更新一个与设备操作人员、数据库人员同步的操作人表格在后端！
+      </el-table-column> -->
       <el-table-column label="厂家" min-width="80px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.manufacture }}</span>
+          <span>{{ row.manufacture_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="钢卷规格" align="center" min-width="150">
+      <el-table-column label="钢卷规格" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.size }}</span>
+          <span>{{ row.coil_size }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入库位置" align="center" min-width="100">
+      <el-table-column label="当前位置" align="center" min-width="320">
         <template slot-scope="{row}">
-          <span>{{ row.location }}</span>
+          <span>{{ row.location_id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前状态" class-name="status-col" min-width="100">
@@ -85,24 +85,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="钢卷名称" align="center" min-width="100">
+      <el-table-column label="钢卷名称" align="center" min-width="120">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span>{{ row.coil_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷牌号" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.grade }}</span>
+          <span>{{ row.coil_grade }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="钢卷牌号" align="center" min-width="100">
+      <el-table-column label="产品标准" align="center" min-width="140">
         <template slot-scope="{row}">
-          <span>{{ row.grade }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="产品标准" align="center" min-width="100">
-        <template slot-scope="{row}">
-          <span>{{ row.standard }}</span>
+          <span>{{ row.product_standard }}</span>
         </template>
       </el-table-column>
       <el-table-column label="熔炼号" align="center" min-width="100">
@@ -115,17 +110,27 @@
           <span>{{ row.coil_class }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="钢卷重量（吨）" align="center" min-width="100">
+      <el-table-column label="钢卷重量（吨）" align="center" min-width="120">
         <template slot-scope="{row}">
-          <span>{{ row.weight }}</span>
+          <span>{{ row.weight_t }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷重量（千克）" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.weight }}</span>
+          <span>{{ row.weight_kg }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="合同号" align="center" min-width="100">
+      <el-table-column label="张数" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.sheet }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="长度" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.length }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="合同号" align="center" min-width="120">
         <template slot-scope="{row}">
           <span>{{ row.contract_no }}</span>
         </template>
@@ -137,17 +142,22 @@
       </el-table-column>
       <el-table-column label="生产日期" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.date }}</span>
+          <span>{{ row.date_production }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="钢卷生产厂家编号" align="center" min-width="100">
+      <!-- <el-table-column label="钢卷生产厂家编号" align="center" min-width="100">
         <template slot-scope="{row}">
           <span>{{ row.coil_no_manufacturers }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="最终用户" align="center" min-width="100">
+      </el-table-column> -->
+      <el-table-column label="最终用户" align="center" min-width="170">
         <template slot-scope="{row}">
           <span>{{ row.consumer }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" align="center" min-width="140">
+        <template slot-scope="{row}">
+          <span>{{ row.entry_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注信息" align="center" min-width="100">
@@ -184,13 +194,13 @@
               <el-input v-model="temp.title" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="操作人" prop="type">
               <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
                 <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
 
           <el-col :span="12">
             <el-form-item label="厂家" prop="type">
@@ -344,9 +354,9 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        t: 'success',
-        o: 'info',
-        f: 'danger'
+        '在库': 'success',
+        '已出库': 'info',
+        '废弃': 'danger'
       }
       return statusMap[status]
     },

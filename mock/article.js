@@ -8,30 +8,48 @@ const image_uri = 'https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70
 
 for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
-    id: '@increment',
-    created_at: '@datetime("yyyy-MM-dd HH:mm:ss")',
-    coil_no: '@string("upper", 2)@string("number", 4)-@string("number", 5)', // 模拟钢卷编号
-    manufacture: '@pick(["宝钢", "鞍钢", "首钢", "马钢", "沙钢"])', // 模拟厂家
-    size: '@float(0.5, 5, 1, 2)mm × @integer(500, 2000)mm', // 模拟规格
-    location: '@pick(["A1", "A2", "B1", "B2", "C3", "D5"])', // 模拟入库位置
-    status: '@pick(["t", "f", "o"])', // 模拟状态
+    id: '@increment', //表格序号，这个按照表格生成
+    entry_at: '@datetime("yyyy-MM-dd HH:mm:ss")', //入库时间
+    coil_no: '@pick(["H150451000700", "50521202500", "X24824205800", "X25405801200"])', // 钢卷编号（二维码内容）/成品号/钢卷号
+    coil_name: '@pick(["普碳钢热轧板带", "热轧分卷", "热轧直发卷", ""])', // 钢卷名称
+
+    coil_grade: '@pick(["Q235B", "RX"])', // 钢卷牌号
+    product_standard: '@pick(["GB/T 3274-2017", "QJ/GF1.029-2011", "GB/T 700-2006"])', // 产品标准
+    heat_no: '@pick(["25B603914", "P25203581", "X24106436", "X25202401"])', // 熔炼号
+    coil_class: '@pick(["合格", ""])', // 产品等级
+    weight_t: '@pick(["24.31t（实）", ""])', // 钢卷重量（吨）
+    weight_kg: '@pick(["17400", "28260Kg", "28440Kg", ""])', // 钢卷重量（千克）
+    sheet: '@pick([""])', // 张数
+    length: '@pick(["960000", "254241", ""])', // 长度
+    contract_no: '@pick(["M5SB457702", "M4SB685302", "M5SB337307", ""])', // 合同号
+    destination: '@pick(["王家营西", ""])', // 到站
+    date_production: '@pick(["2025-05-19 13:54", "2024.08.23", "2025.04.07", ""])', // 生产日期
+    // coil_no_manufacturers: '@pick(["", ""])', // 钢卷生产厂家编号
+    consumer: '@pick(["建发（广州）有限公司", "厦门建发金属有限公司",  ""])', // 最终用户
+    updated_at: '@datetime("yyyy-MM-dd HH:mm:ss")', // 更新时间
+    remark: '@pick([""])', // 备注信息
+
+    manufacture_id: '@pick(["柳钢", "攀钢", "首钢", "马钢", "沙钢"])', // 厂家id，后期换成按照id查询名称
+    coil_size: '@pick(["3.85 X 1500", "4.5 X 1000", "2.5*1500*C", "9.5*1500*C"])', // 钢卷规格
+    location_id: '@pick(["第1列第1层横向第5个，坐标（23，53，56）", "第4列第2层横向第10个，坐标（64，57，13）", "第3列第2层横向第6个，坐标（5，66，38）"])', // 当前所在仓库位置ID，后期换成按照id查询名称
+    status: '@pick(["在库", "已出库", "废弃"])', // 当前状态
 
     
-    timestamp: +Mock.Random.date('T'),
-    author: '@first',
-    reviewer: '@first',
-    title: '@title(5, 10)',
-    content_short: 'mock data',
-    content: baseContent,
-    forecast: '@float(0, 100, 2, 2)',
-    // importance: '@integer(1, 3)',
-    // 'type|1': ['CN', 'US', 'JP', 'EU'],
-    // 'status|1': ['published', 'draft'],
-    display_time: '@datetime',
-    comment_disabled: true,
-    pageviews: '@integer(300, 5000)',
-    image_uri,
-    platforms: ['a-platform']
+    // timestamp: +Mock.Random.date('T'),
+    // author: '@first',
+    // reviewer: '@first',
+    // title: '@title(5, 10)',
+    // content_short: 'mock data',
+    // content: baseContent,
+    // forecast: '@float(0, 100, 2, 2)',
+    // // importance: '@integer(1, 3)',
+    // // 'type|1': ['CN', 'US', 'JP', 'EU'],
+    // // 'status|1': ['published', 'draft'],
+    // display_time: '@datetime',
+    // comment_disabled: true,
+    // pageviews: '@integer(300, 5000)',
+    // image_uri,
+    // platforms: ['a-platform']
   }))
 }
 
