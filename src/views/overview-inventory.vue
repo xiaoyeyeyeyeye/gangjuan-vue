@@ -41,11 +41,6 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <!-- <el-table-column label="序号" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column> -->
       <el-table-column label="序号" align="center" width="80" fixed="left">
         <template slot-scope="scope">
           <span>{{ scope.$index + 1 }}</span>
@@ -54,6 +49,11 @@
       <el-table-column label="入库时间" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.entry_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="出库时间" min-width="150px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.out_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷编号" min-width="150px" align="center">
@@ -144,7 +144,7 @@
           <span>{{ row.destination }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="生产日期" align="center" min-width="100">
+      <el-table-column label="生产日期" align="center" min-width="140">
         <template slot-scope="{row}">
           <span>{{ row.date_production }}</span>
         </template>
@@ -159,7 +159,7 @@
           <span>{{ row.entry_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注信息" align="center" min-width="100">
+      <el-table-column label="备注信息" align="center" min-width="200">
         <template slot-scope="{row}">
           <span>{{ row.remark }}</span>
         </template>
@@ -186,6 +186,11 @@
           <el-col :span="12">
             <el-form-item label="入库时间" prop="entry_at">
               <el-date-picker v-model="temp.entry_at" type="datetime" placeholder="请选择入库时间" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="出库时间" prop="entry_at">
+              <el-date-picker v-model="temp.out_at" type="datetime" placeholder="请选择出库时间" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -368,16 +373,16 @@ export default {
       manufacture_id_options: ['柳钢', '攀钢', '首钢', '马钢', '沙钢'],
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
+      statusOptions: ['在库', '已出库', '废弃'],
       showReviewer: false,
       temp: {
         id: undefined,
-        manufacture_id: 1,
+        manufacture_id: '柳钢',
         remark: '',
         timestamp: new Date(),
         coil_no: '',
         type: '',
-        status: 'published'
+        status: '在库'
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -536,7 +541,7 @@ export default {
     },
     handleModifyStatus(row, status) {
       this.$message({
-        message: '操作Success',
+        message: '操作成功',
         type: 'success'
       })
       row.status = status
@@ -558,11 +563,11 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        manufacture_id: 1,
+        manufacture_id: '柳钢',
         remark: '',
         timestamp: new Date(),
         coil_no: '',
-        status: 'published',
+        status: '在库',
         type: ''
       }
     },
@@ -583,8 +588,8 @@ export default {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
-              coil_no: 'Success',
-              message: 'Created Successfully',
+              title: '成功',
+              message: '新增成功',
               type: 'success',
               duration: 2000
             })
@@ -611,8 +616,8 @@ export default {
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
             this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
+              title: '成功',
+              message: '更新成功',
               type: 'success',
               duration: 2000
             })

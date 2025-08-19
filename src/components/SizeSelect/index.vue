@@ -35,7 +35,7 @@ export default {
       this.$store.dispatch('app/setSize', size)
       this.refreshView()
       this.$message({
-        message: 'Switch Size Success',
+        message: '切换尺寸成功',
         type: 'success'
       })
     },

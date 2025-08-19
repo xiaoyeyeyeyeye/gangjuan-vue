@@ -8,34 +8,16 @@
         出库将由摄像头系统自动定位出库。
         可对出库的钢卷进行修改、删除处理，也可以手动新增出库钢卷。
       </aside>
-      <el-input v-model="listQuery.title" placeholder="钢卷编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.importance" placeholder="厂家" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+      <el-input v-model="listQuery.coil_no" placeholder="钢卷编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.manufacture_id" placeholder="厂家" clearable style="width: 90px" class="filter-item">
+        <el-option v-for="item in manufacture_id_options" :key="item" :label="item" :value="item" />
       </el-select>
-      <el-select v-model="listQuery.type" placeholder="规模类型" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
-      </el-select>
-      <el-select v-model="listQuery.type" placeholder="出库时间" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
-      </el-select>
-      <el-select v-model="listQuery.type" placeholder="操作人" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
-      </el-select>
-      <!-- <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
-      </el-select> -->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查找
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
-      <!-- <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        Export
-      </el-button> -->
-      <!-- <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
-        reviewer
-      </el-checkbox> -->
     </div>
 
     <el-table
@@ -48,50 +30,52 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
+      <el-table-column label="序号" align="center" width="80" fixed="left">
+        <template slot-scope="scope">
+          <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入库时间" min-width="150px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.created_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
+      <el-table-column label="出库时间" min-width="150px" align="center">
+        <span>2025-05-19 13:54</span>
       </el-table-column>
       <el-table-column label="钢卷编号" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.coil_no }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作人" min-width="110px" align="center">
+      <el-table-column label="操作人" min-width="100px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.operator }}</span>
         </template>
-        <!-- 这里记住更新一个与设备操作人员、数据库人员同步的操作人表格在后端！！ -->
       </el-table-column>
       <el-table-column label="厂家" min-width="80px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.manufacture }}</span>
+          <span>{{ row.manufacture_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" align="center" min-width="110">
+      <el-table-column label="钢卷规格" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.size }}</span>
+          <span>{{ row.coil_size }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入库位置" align="center" min-width="100">
+      <el-table-column label="当前位置" align="center" min-width="180">
         <template slot-scope="{row}">
-          <span>{{ row.location }}</span>
+          <span>{{ row.location_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="当前状态" class-name="status-col" width="100">
+      <el-table-column label="当前坐标" align="center" min-width="130">
+        <template slot-scope="{row}">
+          <span>{{ row.location_xyz }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="当前状态" class-name="status-col" min-width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
+            已出库
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
@@ -106,36 +90,60 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Type" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Date" prop="timestamp">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
-        </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Imp">
-          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
-        </el-form-item>
-        <el-form-item label="Remark">
-          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
-        </el-form-item>
+      <el-form ref="dataForm" :rules="rules" :model="temp" class="two-column-form" label-position="left" label-width="120px">
+        <!-- 两列布局开始 -->
+        <el-row :gutter="24" type="flex" wrap>
+          <el-col :span="12">
+            <el-form-item label="出库时间" prop="entry_at">
+              <el-date-picker v-model="temp.entry_at" type="datetime" placeholder="请选择出库时间" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="钢卷编号" prop="coil_no">
+              <el-input v-model="temp.coil_no" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="操作人" prop="operator">
+              <el-input v-model="temp.operator" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="厂家" prop="manufacture_id">
+              <el-select v-model="temp.manufacture_id" class="filter-item" placeholder="请选择厂家">
+                <el-option v-for="item in manufacture_id_options" :key="item.key" :label="item.display_name" :value="item.key" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="钢卷规格" prop="coil_size">
+              <el-input v-model="temp.coil_size" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="当前位置" prop="location_id">
+              <el-input v-model="temp.location_id" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="当前坐标" prop="location_xyz">
+              <el-input v-model="temp.location_xyz" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="当前状态" prop="status">
+              <!-- <el-input v-model="temp.status" /> -->
+              <el-input placeholder="已出库" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          Cancel
+          取消
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
+          确认
         </el-button>
       </div>
     </el-dialog>
@@ -177,10 +185,11 @@ export default {
   directives: { waves },
   filters: {
     statusFilter(status) {
+      // 为了页面效果，全部变为已出库
       const statusMap = {
-        t: 'success',
-        o: 'info',
-        f: 'danger'
+        '在库': 'info',
+        '已出库': 'info',
+        '废弃': 'info'
       }
       return statusMap[status]
     },
@@ -202,32 +211,32 @@ export default {
         type: undefined,
         sort: '+id'
       },
-      importanceOptions: [1, 2, 3],
+      manufacture_id_options: ['柳钢', '攀钢', '首钢', '马钢', '沙钢'],
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
+      statusOptions: ['已出库', '废弃'],
       showReviewer: false,
       temp: {
         id: undefined,
-        importance: 1,
+        manufacture_id: '柳钢',
         remark: '',
         timestamp: new Date(),
-        title: '',
+        coil_no: '',
         type: '',
-        status: 'published'
+        status: '已出库'
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: '编辑',
+        create: '新增'
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
         type: [{ required: true, message: 'type is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        coil_no: [{ required: true, message: '请输入钢卷编号', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -254,7 +263,7 @@ export default {
     },
     handleModifyStatus(row, status) {
       this.$message({
-        message: '操作Success',
+        message: '操作成功',
         type: 'success'
       })
       row.status = status
@@ -276,11 +285,11 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
+        manufacture_id: '柳钢',
         remark: '',
         timestamp: new Date(),
-        title: '',
-        status: 'published',
+        coil_no: '',
+        status: '已出库',
         type: ''
       }
     },
@@ -302,7 +311,7 @@ export default {
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: 'Created Successfully',
+              message: '新增成功',
               type: 'success',
               duration: 2000
             })
@@ -329,8 +338,8 @@ export default {
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
             this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
+              title: '成功',
+              message: '更新成功',
               type: 'success',
               duration: 2000
             })
@@ -340,8 +349,8 @@ export default {
     },
     handleDelete(row, index) {
       this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
+        title: '成功',
+        message: '撤销成功',
         type: 'success',
         duration: 2000
       })
@@ -383,3 +392,20 @@ export default {
   }
 }
 </script>
+<style scoped>
+.two-column-form .el-row {
+  flex-wrap: wrap;
+}
+
+.two-column-form .el-col {
+  min-width: 300px; /* 最小宽度，防止太窄换行 */
+}
+
+/* 表单最大高度自动滚动，而不是整个 dialog 出现滚动条 */
+.el-dialog__body {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden; /* 禁止横向滚动 */
+}
+</style>
+
