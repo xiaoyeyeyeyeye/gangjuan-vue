@@ -37,26 +37,12 @@ for (let i = 0; i < count; i++) {
     status: '@pick(["在库", "已出库", "废弃"])', // 当前状态
 
     operator: '@pick(["员工1", "员工2", "设备自动更新", "设备自动更新", "设备自动更新", "设备自动更新"])',
-
-    //操作基本信息的，暂时放在这里
-    operator_id: '@pick(["员工1", "员工2", "员工3", "员工4", "员工5", "员工6"])', //操作人
-    action_type: '@pick(["入库", "出库", "修改信息", "处理冲突"])', //操作类型
-    action_time: '@datetime("yyyy-MM-dd HH:mm:ss")', // 操作时间
-    details: '@pick(["手动H150451000700出库", "手动50521202500入库", "处理冲突50521202500状态，修改为已出库", "修改信息X24824205800，厂家柳钢变为攀钢"])', // 详细描述
-    
-    //告警基本信息的，暂时放在这里
-    alarm_id: '@pick(["20250607281983", "2025062443581980", "202512454281982", "2025024534988", "2025124341981", "2025032231986"])', //告警id
-    message: '@pick(["检测显示已经出库，但钢卷状态未出库", "检测显示未出库，但钢卷状态已出库", "检测显示无钢卷，但钢卷状态已入库", "检测显示有钢卷，但系统无多余钢卷入库",])', //告警描述
-    alarm_type: '@pick(["钢卷状态冲突"])', // 告警类型
-    created_at: '@datetime("yyyy-MM-dd HH:mm:ss")', // 出发时间
-    manual_result: '@pick(["未处理", "忽略", "已解决"])', // 处理情况
-  
   }))
 }
 
 module.exports = [
   {
-    url: '/vue-element-admin/article/list',
+    url: '/vue-element-admin/coil/list',
     type: 'get',
     response: config => {
       const { importance, type, title, page = 1, limit = 20, sort } = config.query
@@ -85,7 +71,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-element-admin/article/detail',
+    url: '/vue-element-admin/coil/detail',
     type: 'get',
     response: config => {
       const { id } = config.query
@@ -101,7 +87,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-element-admin/article/pv',
+    url: '/vue-element-admin/coilo/pv',
     type: 'get',
     response: _ => {
       return {
@@ -119,7 +105,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-element-admin/article/create',
+    url: '/vue-element-admin/coil/create',
     type: 'post',
     response: _ => {
       return {
@@ -130,7 +116,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-element-admin/article/update',
+    url: '/vue-element-admin/coil/update',
     type: 'post',
     response: _ => {
       return {

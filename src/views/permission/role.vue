@@ -9,37 +9,37 @@
     </aside>
     <el-button type="primary" @click="handleAddRole">新增用户</el-button>
     <el-table :data="rolesList" style="width: 100%;margin-top:30px;" border>
-      <el-table-column align="center" label="权限类型" width="220">
+      <el-table-column align="center" label="权限类型" min-width="120">
         <template slot-scope="scope">
           {{ scope.row.key }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="工号" width="220">
+      <el-table-column align="center" label="工号" min-width="120">
         <template slot-scope="scope">
           {{ scope.row.number }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="姓名" width="220">
+      <el-table-column align="center" label="姓名" min-width="120">
         <template slot-scope="scope">
-          {{ scope.row.number }}
+          {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="手机号" width="220">
+      <el-table-column align="center" label="手机号" min-width="120">
         <template slot-scope="scope">
           {{ scope.row.phone }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="密码" width="220">
         <template slot-scope="scope">
-          {{ scope.row.secret }}
+          {{ scope.row.mima }}
         </template>
       </el-table-column>
-      <el-table-column align="header-center" label="描述">
+      <el-table-column align="header-center" label="描述" min-width="220">
         <template slot-scope="scope">
           {{ scope.row.description }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作">
+      <el-table-column align="center" label="操作" width="220">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">编辑</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
