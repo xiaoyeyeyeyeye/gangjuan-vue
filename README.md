@@ -250,3 +250,39 @@ npm run lint -- --fix
 git add .
 git commit -m "你的提交说明"
 git push
+
+3.文件部署
+3.1打包--项目终端
+npm run build:prod
+
+3.2上传生成的dist文件夹--电脑cmd
+打开bash，进入项目文件，运行
+scp -r ./dist root@你的服务器IP:/var/www/上传位置/
+即
+scp -r ./dist root@47.122.56.161:/var/www/new_gangjuan/
+（新版本位于/var/www/new_gangjuan/dist，旧版本位于/var/www/gangjuan）
+（阿里云密码一般为大小写字母+数字）
+
+3.3编辑 nginx 配置文件--登录服务器控制终端
+3.3.1打开配置文件
+sudo nano /etc/nginx/sites-enabled/default
+3.3.2修改文件
+server {
+    listen 80;
+    server_name _;
+
+    root /var/www/new_gangjuan/dist;  //这里换成新的位置
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
+修改后ctrl + o 保存，然后退出
+3.3.3检查配置是否正确
+sudo nginx -t
+3.3.4重载 nginx
+sudo systemctl reload nginx
+
+3.4打开浏览器访问
+http://47.122.56.161/#/dashboard

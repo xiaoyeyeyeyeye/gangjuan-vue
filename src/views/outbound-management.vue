@@ -12,6 +12,7 @@
       <el-select v-model="listQuery.manufacture_id" placeholder="厂家" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in manufacture_id_options" :key="item" :label="item" :value="item" />
       </el-select>
+      <el-date-picker v-model="value2" type="datetimerange" clearable class="filter-item" :picker-options="pickerOptions" range-separator="至" start-placeholder="出库开始时间" end-placeholder="出库结束时间" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查找
       </el-button>
@@ -238,7 +239,37 @@ export default {
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         coil_no: [{ required: true, message: '请输入钢卷编号', trigger: 'blur' }]
       },
-      downloadLoading: false
+      downloadLoading: false,
+
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
+      value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+      value2: ''
     }
   },
   created() {
