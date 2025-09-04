@@ -1,19 +1,20 @@
 <template>
   <div class="dashboard-container">
     <adminDashboard />
-    <div ref="container" style="width: 100%; height: 70vh;" />
-    <!-- 弹窗 -->
-    <el-dialog
-      title="钢卷信息"
-      :visible.sync="dialogFormVisible"
-      width="30%"
-    >
-      <p v-if="selected">钢卷 ID: {{ selected.userData.id }}</p>
+    <div class="content">
+      <!-- 左侧：Three.js 容器 -->
+      <div ref="container" class="three-container" />
 
-      <template #footer>
-        <el-button @click="dialogFormVisible = false">关闭</el-button>
-      </template>
-    </el-dialog>
+      <!-- 右侧：固定信息展示区 -->
+      <div class="info-panel">
+        <el-card class="coil-card">
+          <h3>钢卷信息</h3>
+          <p v-if="selected"><strong>ID:</strong> {{ selected.userData.id }}</p>
+          <p v-else><strong>请选择钢卷</strong></p>
+          <!-- 后续可拓展更多字段 -->
+        </el-card>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -30,7 +31,6 @@ export default {
     return {
       coilMeshes: [],
       selectedCoil: null,
-      dialogFormVisible: false, // ✅ 控制对话框
       selected: null // ✅ 记录选中钢卷
     }
   },
@@ -200,7 +200,6 @@ export default {
           })
           this.selectedCoil = selected
           this.selected = selected // ✅ 保存到 data
-          this.dialogFormVisible = true // ✅ 打开对话框
         } else {
           if (this.selectedCoil) {
             this.restoreCoilMaterial(this.selectedCoil)
@@ -208,6 +207,12 @@ export default {
             this.selected = null
           }
         }
+      })
+
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize(container.clientWidth, container.clientHeight)
       })
 
       // === 动画循环 ===
@@ -273,3 +278,34 @@ export default {
   }
 }
 </script>
+<style scoped>
+.content {
+  display: flex;
+  height: 70vh; /* 高度要固定，否则 clientHeight 可能是 0 */
+}
+
+.three-container {
+  flex: 1; /* 占满剩余空间 */
+}
+
+.info-panel {
+  width: 300px;
+  height: 100%; /* 跟随 .content */
+  padding: 0; /* 让 card 贴边 */
+  background: #f9f9f9;
+  border-left: 1px solid #e0e0e0;
+}
+
+.coil-card {
+  height: 100%; /* 填满右侧区域 */
+  border-radius: 0; /* 贴边更好看，可以保留圆角 */
+  display: flex;
+  flex-direction: column;
+}
+
+.coil-card .el-card__body {
+  flex: 1;
+  overflow-y: auto; /* 内容多时滚动 */
+  padding: 16px;
+}
+</style>
