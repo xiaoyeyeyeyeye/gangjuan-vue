@@ -69,13 +69,25 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/scan',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/scan-code'),
+        name: 'Scan',
+        meta: { title: '扫码出入库', icon: 'el-icon-full-screen', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/overview',
     component: Layout,
     children: [
       {
         path: 'index',
         component: () => import('@/views/overview-inventory'),
-        name: 'Theme',
+        name: 'Overview',
         meta: { title: '库存总览', icon: 'el-icon-s-cooperation', noCache: true }
       }
     ]
@@ -87,7 +99,7 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/entry-management'),
-        name: 'Icons',
+        name: 'Entry',
         meta: { title: '入库管理', icon: 'el-icon-finished', noCache: true }
       }
     ]
@@ -95,36 +107,35 @@ export const constantRoutes = [
   {
     path: '/outbound',
     component: Layout,
-    // redirect: '/pdf/index',
     children: [
       {
         path: 'index',
         component: () => import('@/views/outbound-management'),
-        name: 'PDF',
+        name: 'Outbound',
         meta: { title: '出库管理', icon: 'el-icon-upload2', noCache: true }
       }
     ]
   },
   {
-    path: '/example',
+    path: '/history',
     component: Layout,
-    redirect: '/example/list',
-    name: 'Example',
+    redirect: '/history/list',
+    name: 'History',
     meta: {
       title: '历史记录',
       icon: 'edit'
     },
     children: [
       {
-        path: 'create',
+        path: 'operation',
         component: () => import('@/views/operation-log'),
-        name: 'CreateArticle',
+        name: 'Operation',
         meta: { title: '操作日志', noCache: true }
       },
       {
-        path: 'list',
+        path: 'alarm',
         component: () => import('@/views/alarm'),
-        name: 'ArticleList',
+        name: 'Alarm',
         meta: { title: '告警通知', noCache: true }
       }
     ]
@@ -155,9 +166,9 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'directive',
+        path: 'user',
         component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
+        name: 'User',
         meta: {
           title: '个人账户',
           noCache: true
