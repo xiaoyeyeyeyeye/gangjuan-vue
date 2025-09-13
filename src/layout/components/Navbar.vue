@@ -16,6 +16,16 @@
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
 
+        <a :href="downloadUrl" download class="right-menu-button hover-effect">
+          <el-button
+            type="primary"
+            size="mini"
+            class="filter-item"
+          >
+            下载扫码app
+          </el-button>
+        </a>
+
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
@@ -63,6 +73,12 @@ export default {
     Screenfull,
     SizeSelect
     // Search
+  },
+  data() {
+    return {
+      // todo:替换成你自己的下载地址，需服务器配置、后端支持
+      downloadUrl: 'https://your-domain.com/path/to/your-app.apk'
+    }
   },
   computed: {
     ...mapGetters([
@@ -137,6 +153,19 @@ export default {
         &:hover {
           background: rgba(0, 0, 0, .025)
         }
+      }
+    }
+
+    .right-menu-button {
+      display: inline-block;
+      padding: 0 8px;
+      height: 95%;
+      align-items: center;
+      vertical-align: text-bottom;
+
+      &.hover-effect {
+        cursor: pointer;
+        transition: background .3s;
       }
     }
 
