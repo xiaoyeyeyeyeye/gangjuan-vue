@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div>
-      <el-form :model="role" label-width="80px" label-position="left">
+      <el-form :model="role" label-width="80px" label-position="left" style="max-width:500px">
         <!-- <i class="el-icon-user-solid" style="color:#ffffff;" /> -->
         <i class="user" style="color:#ffffff; font-size: 36px;" />
         <el-form-item label="角色">
