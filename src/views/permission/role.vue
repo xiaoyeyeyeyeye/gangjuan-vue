@@ -7,7 +7,20 @@
     <aside>
       管理员可以查看账户信息，并进行账户信息更改、手机解绑、密码重置等操作。
     </aside>
-    <el-button type="primary" @click="handleAddRole">新增用户</el-button>
+
+    <el-select v-model="rolesList.key" placeholder="角色权限" clearable style="width: 120px" class="filter-item">
+      <el-option v-for="item in role_id_options" :key="item" :label="item" :value="item" />
+    </el-select>
+
+    <el-input v-model="rolesList.number" placeholder="工号" style="width: 150px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
+    <el-input v-model="rolesList.name" placeholder="姓名" style="width: 120px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
+    <el-input v-model="rolesList.phone" placeholder="手机号" style="width: 150px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
+    <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      查找
+    </el-button>
+    <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleAddRole">
+      新增
+    </el-button>
     <el-table :data="rolesList" style="width: 100%;margin-top:30px;" border>
       <el-table-column align="center" label="权限类型" min-width="120">
         <template slot-scope="scope">
@@ -52,7 +65,7 @@
       <el-form :model="role" label-width="80px" label-position="left">
         <el-form-item label="角色">
           <!-- <el-input v-model="role.key" placeholder="角色下拉框" /> -->
-          <el-dropdown>
+          <!-- <el-dropdown>
             <el-button v-model="role.key" type="primary">
               角色<i class="el-icon-arrow-down el-icon--right" />
             </el-button>
@@ -61,7 +74,12 @@
               <el-dropdown-item>developer</el-dropdown-item>
               <el-dropdown-item>worker</el-dropdown-item>
             </el-dropdown-menu>
-          </el-dropdown>
+          </el-dropdown> -->
+
+          <el-select v-model="role.key" placeholder="角色权限" clearable style="width: 120px" class="filter-item">
+            <el-option v-for="item in role_id_options" :key="item" :label="item" :value="item" />
+          </el-select>
+
         </el-form-item>
         <el-form-item label="工号">
           <el-input v-model="role.number" placeholder="工号" />
@@ -108,7 +126,8 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'title'
-      }
+      },
+      role_id_options: ['admin', 'worker', 'device']
     }
   },
   computed: {
@@ -130,6 +149,22 @@ export default {
     async getRoles() {
       const res = await getRoles()
       this.rolesList = res.data
+    },
+    handleFilter() {
+      this.rolesList.page = 1
+      this.getList()
+    },
+    getList() {
+      this.listLoading = true
+      getRoles(this.rolesList).then(response => {
+        this.list = response.data.items
+        this.total = response.data.total
+
+        // Just to simulate the time of the request
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
     },
 
     // Reshape the routes structure so that it looks the same as the sidebar
