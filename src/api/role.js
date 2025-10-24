@@ -2,37 +2,79 @@ import request from '@/utils/request'
 
 export function getRoutes() {
   return request({
-    url: '/vue-element-admin/routes',
+    url: '/api/auth/routes', // /////////
     method: 'get'
   })
 }
 
-export function getRoles() {
+export function login() {
   return request({
-    url: '/vue-element-admin/roles',
-    method: 'get'
+    url: '/api/auth/login',
+    method: 'post'
   })
 }
 
-export function addRole(data) {
+export function addUser(data) {
   return request({
-    url: '/vue-element-admin/role',
+    url: '/api/user',
     method: 'post',
     data
   })
 }
 
-export function updateRole(id, data) {
+export function getUser(user_id) {
   return request({
-    url: `/vue-element-admin/role/${id}`,
-    method: 'put',
-    data
+    url: '/api/user/' + user_id,
+    method: 'get'
   })
 }
 
-export function deleteRole(id) {
+export function updatePassword() {
   return request({
-    url: `/vue-element-admin/role/${id}`,
+    url: '/api/user/password',
+    method: 'put'
+  })
+}
+
+export function resetPassword(user_id) {
+  return request({
+    url: `/api/user/${user_id}/password`,
+    method: 'put'
+  })
+}
+
+// 解绑手机 、、、、、、、、、、、、、、、、、
+export function unbindUserPhone(userId) {
+  return request({
+    url: `/api/user/${userId}/phone`,
     method: 'delete'
+  })
+}
+
+export function getUsers() {
+  return request({
+    url: '/api/user',
+    method: 'get'
+  })
+}
+
+export function deleteUser(user_id) {
+  return request({
+    url: '/api/user/' + user_id,
+    method: 'delete'
+  })
+}
+
+export function logout() {
+  return request({
+    url: '/api/auth/logout',
+    method: 'post'
+  })
+}
+
+export function getRoles() {
+  return request({
+    url: '/api/user/roles',
+    method: 'get'
   })
 }

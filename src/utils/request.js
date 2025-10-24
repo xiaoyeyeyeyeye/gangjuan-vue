@@ -3,76 +3,93 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
-// create an axios instance
+// 开发环境url及超时时间
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  baseURL: process.env.VUE_APP_BASE_API,
+  timeout: 5000
 })
 
-// request interceptor
+// 请求拦截器
 service.interceptors.request.use(
   config => {
-    // do something before request is sent
-
     if (store.getters.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
+      // 根据后端要求设置token，常见的有Authorization、X-Token等
+      config.headers['Authorization'] = `Bearer ${getToken()}`
     }
     return config
   },
   error => {
-    // do something with request error
-    console.log(error) // for debug
+    console.log(error)
     return Promise.reject(error)
   }
 )
 
-// response interceptor
+// 响应拦截器 - 根据后端返回格式调整
 service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-  */
-
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
   response => {
     const res = response.data
 
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    // 根据后端返回格式调整判断条件
+    // 常见格式1: { code: 200, data: ..., message: 'success' }
+    // 常见格式2: { success: true, data: ..., message: 'success' }
+
+    if (res.code === 200 || res.success) {
+      return res
+    } else {
       Message({
         message: res.message || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
 
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
+      // 根据后端定义的错误码处理
+      if (res.code === 400) {
+        // 请求参数错误
+        MessageBox.confirm('请求参数错误', {
+          cancelButtonText: '确认',
+          type: 'warning'
+        })
+      } else if (res.code === 401) {
+        // 重新登录
+        MessageBox.confirm('登录状态已过期，请重新登录', '确认退出', {
+          confirmButtonText: '重新登录',
+          cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           store.dispatch('user/resetToken').then(() => {
             location.reload()
           })
         })
+      } else if (res.code === 403) {
+        // 无访问权限
+        MessageBox.confirm('无访问权限', {
+          cancelButtonText: '确认',
+          type: 'warning'
+        })
+      } else if (res.code === 404) {
+        // 请求的资源不存在
+        MessageBox.confirm('请求的资源不存在', {
+          cancelButtonText: '确认',
+          type: 'warning'
+        })
+      } else if (res.code === 409) {
+        // 请求与服务器当前状态冲突
+        MessageBox.confirm('请求与服务器当前状态冲突', {
+          cancelButtonText: '确认',
+          type: 'warning'
+        })
+      } else if (res.code === 500) {
+        // 服务器内部错误
+        MessageBox.confirm('服务器内部错误', {
+          cancelButtonText: '确认',
+          type: 'warning'
+        })
       }
       return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    console.log('err' + error)
     Message({
       message: error.message,
       type: 'error',
