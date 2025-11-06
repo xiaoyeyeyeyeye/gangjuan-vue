@@ -18,7 +18,7 @@
     <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
       查找
     </el-button>
-    <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleAddRole">
+    <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleAddUser">
       新增
     </el-button>
     <el-table v-loading="listLoading" :data="list" style="width: 100%;margin-top:30px;" border>
@@ -104,7 +104,7 @@
 <script>
 import path from 'path'
 import { deepClone } from '@/utils'
-import { getRoutes, getRoles, addRole, deleteRole, updateRole } from '@/api/role'
+import { getRoutes, getRoles, addUser, deleteUser } from '@/api/role'
 
 const defaultRole = {
   key: '',
@@ -193,7 +193,7 @@ export default {
       })
     },
 
-    handleAddRole() {
+    handleAddUser() {
       this.role = Object.assign({}, defaultRole)
       this.dialogType = 'new'
       this.dialogVisible = true
@@ -223,7 +223,7 @@ export default {
 
         // 使用id而不是key
         const id = row.id || row.key
-        await deleteRole(id)
+        await deleteUser(id)
         this.rolesList.splice($index, 1)
         this.$message({
           type: 'success',
@@ -284,14 +284,14 @@ export default {
         const isEdit = this.dialogType === 'edit'
 
         if (isEdit) {
-          await updateRole(this.role.id, this.role)
+          // await updateRole(this.role.id, this.role)
           // 更新本地数据
           const index = this.rolesList.findIndex(item => item.id === this.role.id)
           if (index > -1) {
             this.rolesList.splice(index, 1, { ...this.rolesList[index], ...this.role })
           }
         } else {
-          const { data } = await addRole(this.role)
+          const { data } = await addUser(this.role)
           this.rolesList.push(data)
         }
 
@@ -347,42 +347,7 @@ export default {
       })
       return data
     },
-    // handleAddRole() {
-    //   this.role = Object.assign({}, defaultRole)
-    //   if (this.$refs.tree) {
-    //     this.$refs.tree.setCheckedNodes([])
-    //   }
-    //   this.dialogType = 'new'
-    //   this.dialogVisible = true
-    // },
-    // handleEdit(scope) {
-    //   this.dialogType = 'edit'
-    //   this.dialogVisible = true
-    //   this.checkStrictly = true
-    //   this.role = deepClone(scope.row)
-    //   this.$nextTick(() => {
-    //     const routes = this.generateRoutes(this.role.routes)
-    //     this.$refs.tree.setCheckedNodes(this.generateArr(routes))
-    //     // set checked state of a node not affects its father and child nodes
-    //     this.checkStrictly = false
-    //   })
-    // },
-    // handleDelete({ $index, row }) {
-    //   this.$confirm('Confirm to remove the role?', 'Warning', {
-    //     confirmButtonText: 'Confirm',
-    //     cancelButtonText: 'Cancel',
-    //     type: 'warning'
-    //   })
-    //     .then(async() => {
-    //       await deleteRole(row.key)
-    //       this.rolesList.splice($index, 1)
-    //       this.$message({
-    //         type: 'success',
-    //         message: 'Delete succed!'
-    //       })
-    //     })
-    //     .catch(err => { console.error(err) })
-    // },
+
     generateTree(routes, basePath = '/', checkedKeys) {
       const res = []
 
@@ -400,42 +365,6 @@ export default {
       }
       return res
     },
-    // async confirmRole() {
-    //   const isEdit = this.dialogType === 'edit'
-
-    //   const checkedKeys = this.$refs.tree.getCheckedKeys()
-    //   this.role.routes = this.generateTree(deepClone(this.serviceRoutes), '/', checkedKeys)
-
-    //   if (isEdit) {
-    //     await updateRole(this.role.key, this.role)
-    //     for (let index = 0; index < this.rolesList.length; index++) {
-    //       if (this.rolesList[index].key === this.role.key) {
-    //         this.rolesList.splice(index, 1, Object.assign({}, this.role))
-    //         break
-    //       }
-    //     }
-    //   } else {
-    //     const { data } = await addRole(this.role)
-    //     this.role.key = data.key
-    //     this.role.number = data.number
-    //     this.role.phone = data.phone
-    //     this.rolesList.push(this.role)
-    //   }
-
-    //   const { key, number, phone } = this.role
-    //   this.dialogVisible = false
-    //   this.$notify({
-    //     title: 'Success',
-    //     dangerouslyUseHTMLString: true,
-    //     message: `
-    //         <div>角色定位: ${key}</div>
-    //         <div>工号: ${number}</div>
-    //         <div>手机号: ${phone}</div>
-    //       `,
-    //     type: 'success'
-    //   })
-    // },
-    // reference: src/view/layout/components/Sidebar/SidebarItem.vue
     onlyOneShowingChild(children = [], parent) {
       let onlyOneChild = null
       const showingChildren = children.filter(item => !item.hidden)

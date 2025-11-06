@@ -6,12 +6,9 @@ const role = require('./role')
 const article = require('./article')
 const search = require('./remote-search')
 
-const mocks = [
-  ...user,
-  ...role,
-  ...article,
-  ...search
-]
+const allMocks = [user, role, article, search]
+
+const mocks = allMocks.flatMap(m => Array.isArray(m) ? m : [m])
 
 // for front mock
 // please use it cautiously, it will redefine XMLHttpRequest,
