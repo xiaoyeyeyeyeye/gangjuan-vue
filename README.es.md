@@ -165,7 +165,7 @@ npm install
 npm run dev
 ```
 
-Automáticamente se abrirá el siguiente enlace en su navegador http://localhost:9527
+Automáticamente se abrirá el siguiente enlace en su navegador http://localhost:5173
 
 ## Construcción
 

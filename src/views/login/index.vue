@@ -7,15 +7,15 @@
         <h3 class="title">xx管理系统</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="loginId">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
+          ref="loginId"
+          v-model="loginForm.loginId"
           placeholder="工号/手机号（第一次登录请使用工号）"
-          name="username"
+          name="loginId"
           type="text"
           tabindex="1"
           autocomplete="on"
@@ -46,15 +46,15 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click="handleLogin">登录</el-button>
 
       <!-- <div style="position:relative">
         <div class="tips">
-          <span>Username : admin</span>
+          <span>loginId : admin</span>
           <span>Password : any</span>
         </div>
         <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
+          <span style="margin-right:18px;">loginId : editor</span>
           <span>Password : any</span>
         </div>
 
@@ -75,15 +75,16 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { validateUsername as validateLoginIdUtil } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
+// import bcrypt from 'bcryptjs'
 
 export default {
   name: 'Login',
   components: { SocialSign },
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
+    const validateLoginId = (rule, value, callback) => {
+      if (!validateLoginIdUtil(value)) {
         callback(new Error('请输入正确的工号/手机号（第一次登录请使用工号）'))
       } else {
         callback()
@@ -98,11 +99,11 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        loginId: 'admin',
+        password: '123456'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        loginId: [{ required: true, trigger: 'blur', validator: validateLoginId }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
@@ -129,8 +130,8 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.username === '') {
-      this.$refs.username.focus()
+    if (this.loginForm.loginId === '') {
+      this.$refs.loginId.focus()
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
@@ -154,21 +155,52 @@ export default {
       })
     },
     handleLogin() {
+      console.log('点击登录按钮')
       this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
+        if (!valid) {
           console.log('error submit!!')
           return false
         }
+
+        this.loading = true
+        console.log('准备后端接口')
+
+        try {
+          this.$store.dispatch('user/login', {
+            loginId: this.loginForm.loginId,
+            password: this.loginForm.password
+          })
+          console.log('[Login] 登录成功，开始跳转主页')
+          this.$store.dispatch('user/getInfo')
+          const redirect = this.redirect || '/dashboard'
+          this.$router.replace(redirect)
+        } catch (error) {
+          console.error('登录失败', error)
+          this.$message.error(error || '登录失败')
+        } finally {
+          this.loading = false
+        }
+
+        // this.$store.dispatch('user/login', {
+        //   loginId: this.loginForm.loginId,
+        //   // password: bcrypt.hashSync(this.loginForm.loginId, 10) //加密准备
+        //   password: this.loginForm.password
+        // })
+        //   .then(() => {
+        //     console.log('[Login] 登录成功，开始跳转主页')
+        //     return this.$store.dispatch('user/getInfo')
+        //   })
+        //   .then(() => {
+        //     // 登录成功后跳转目标页面
+        //     this.$router.replace(this.redirect || '/dashboard')
+        //   })
+        //   .catch(error => {
+        //     console.error('登录失败', error)
+        //     this.$message.error(error || '登录失败')
+        //   })
+        //   .finally(() => {
+        //     this.loading = false
+        //   })
       })
     },
     getOtherQuery(query) {

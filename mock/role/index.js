@@ -2,7 +2,12 @@ const Mock = require('mockjs')
 const { deepClone } = require('../utils')
 const { asyncRoutes, constantRoutes } = require('./routes.js')
 
-const routes = deepClone([...constantRoutes, ...asyncRoutes])
+// 修复：确保 constantRoutes 和 asyncRoutes 是数组
+// 如果不是数组，转换为数组或使用空数组作为默认值
+const constantRoutesArray = Array.isArray(constantRoutes) ? constantRoutes : []
+const asyncRoutesArray = Array.isArray(asyncRoutes) ? asyncRoutes : []
+
+const routes = deepClone([...constantRoutesArray, ...asyncRoutesArray])
 
 const roles = [
   {
@@ -65,8 +70,10 @@ module.exports = [
     type: 'post',
     response: {
       code: 20000,
-      data: {
-        key: Mock.mock('@integer(300, 5000)')
+      data() {
+        return{
+          key: Mock.mock('@integer(300, 5000)')
+        }
       }
     }
   },
@@ -77,8 +84,10 @@ module.exports = [
     type: 'put',
     response: {
       code: 20000,
-      data: {
-        status: 'success'
+      data() {
+        return {
+          status: 'success'
+        }
       }
     }
   },

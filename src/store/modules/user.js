@@ -10,6 +10,13 @@ const state = {
   roles: []
 }
 
+const getters = {
+  token: state => state.token,
+  name: state => state.name,
+  avatar: state => state.avatar,
+  roles: state => state.roles
+}
+
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
@@ -31,13 +38,21 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { loginId, password } = userInfo
+    console.log('进入user的actions')
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
+      login({ loginId: loginId.trim(), password: password }).then(response => {
+        console.log('进入user的actions的Promise')
+        console.log('response的内容为', JSON.stringify(response))
+        // 直接使用返回的对象
+        const token = response.token || 'mock-token'
+        if (token) {
+          commit('SET_TOKEN', token)
+          setToken(token)
+          resolve()
+        } else {
+          reject('登录失败：后端未返回 token')
+        }
       }).catch(error => {
         reject(error)
       })
@@ -48,24 +63,18 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          reject('Verification failed, please Login again.')
+        const res = response // 根据你的接口，这里就是 {userId, name, roleId, token}
+        if (!res) {
+          return reject('getInfo: 返回数据为空')
         }
 
-        const { roles, name, avatar, introduction } = data
-
-        // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
-        }
+        const roles = res.roleId === 1 ? ['admin'] : ['user']
 
         commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        commit('SET_INTRODUCTION', introduction)
-        resolve(data)
+        commit('SET_NAME', res.name)
+        commit('SET_AVATAR', res.avatar || '')
+        commit('SET_INTRODUCTION', res.introduction || '')
+        resolve(res)
       }).catch(error => {
         reject(error)
       })
@@ -123,9 +132,17 @@ const actions = {
   }
 }
 
+// export default {
+//   namespaced: true,
+//   state,
+//   mutations,
+//   actions
+// }
+
 export default {
   namespaced: true,
   state,
   mutations,
-  actions
+  actions,
+  getters
 }
