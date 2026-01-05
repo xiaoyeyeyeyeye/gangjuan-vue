@@ -31,6 +31,25 @@ const mutations = {
 // axios.defaults.withCredentials = true
 
 const actions = {
+  async getInfo({ commit }) {
+    // 从 token 解析 or 本地恢复
+    const token = getToken()
+    if (!token) {
+      throw new Error('token 不存在')
+    }
+
+    // 从 localStorage / cookie 恢复
+    const user = JSON.parse(localStorage.getItem('user'))
+
+    if (!user) {
+      throw new Error('用户信息不存在')
+    }
+
+    commit('SET_USER', user)
+    commit('SET_ROLES', [user.roleId])
+
+    return user
+  },
   async login({ commit }, payload) {
     const res = await login(payload)
 
@@ -46,14 +65,18 @@ const actions = {
     commit('SET_TOKEN', token)
     setToken(token)
 
-    commit('SET_USER', {
+    const user = {
       userId: res.userId,
       name: res.name,
       roleId: res.roleId
-    })
+    }
+
+    commit('SET_USER', user)
 
     const roles = [res.roleId]
     commit('SET_ROLES', roles)
+
+    localStorage.setItem('user', JSON.stringify(user))
 
     return res
   },
