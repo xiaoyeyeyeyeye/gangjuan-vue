@@ -246,6 +246,10 @@ Copyright (c) 2017-present PanJiaChen
 1.自动改对格式
 npm run lint -- --fix
 
+1.1.运行代码
+先起后端
+npm run dev
+
 2.推送代码
 git add .
 git commit -m "你的提交说明"

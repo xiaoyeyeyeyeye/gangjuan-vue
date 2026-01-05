@@ -154,54 +154,42 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
-      console.log('点击登录按钮')
-      this.$refs.loginForm.validate(valid => {
-        if (!valid) {
-          console.log('error submit!!')
-          return false
-        }
-
-        this.loading = true
-        console.log('准备后端接口')
-
-        try {
-          this.$store.dispatch('user/login', {
-            loginId: this.loginForm.loginId,
-            password: this.loginForm.password
-          })
-          console.log('[Login] 登录成功，开始跳转主页')
-          this.$store.dispatch('user/getInfo')
-          const redirect = this.redirect || '/dashboard'
-          this.$router.replace(redirect)
-        } catch (error) {
-          console.error('登录失败', error)
-          this.$message.error(error || '登录失败')
-        } finally {
-          this.loading = false
-        }
-
-        // this.$store.dispatch('user/login', {
-        //   loginId: this.loginForm.loginId,
-        //   // password: bcrypt.hashSync(this.loginForm.loginId, 10) //加密准备
-        //   password: this.loginForm.password
-        // })
-        //   .then(() => {
-        //     console.log('[Login] 登录成功，开始跳转主页')
-        //     return this.$store.dispatch('user/getInfo')
-        //   })
-        //   .then(() => {
-        //     // 登录成功后跳转目标页面
-        //     this.$router.replace(this.redirect || '/dashboard')
-        //   })
-        //   .catch(error => {
-        //     console.error('登录失败', error)
-        //     this.$message.error(error || '登录失败')
-        //   })
-        //   .finally(() => {
-        //     this.loading = false
-        //   })
+    async handleLogin() {
+      // 表单校验
+      const valid = await new Promise(resolve => {
+        this.$refs.loginForm.validate(valid => resolve(valid))
       })
+
+      if (!valid) return
+
+      this.loading = true
+
+      try {
+        const res = await this.$store.dispatch('user/login', {
+          loginId: this.loginForm.loginId,
+          password: this.loginForm.password
+        })
+
+        this.$message.success('登录成功')
+
+        this.loading = false
+
+        const roles = [res.roleId]
+        const accessRoutes = await this.$store.dispatch('permission/generateRoutes', roles)
+        this.$router.addRoutes(accessRoutes)
+        // this.$router.push({ path: '/dashboard' })
+        this.$router.push({
+          path: this.redirect || '/dashboard',
+          query: this.otherQuery
+        })
+        console.log(res)
+        return res
+      } catch (error) {
+        console.error('登录失败', error)
+        this.$message.error(error || '登录失败')
+      } finally {
+        this.loading = false
+      }
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

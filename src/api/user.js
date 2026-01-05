@@ -4,17 +4,17 @@ export function login(data) {
   return request({
     url: '/api/auth/login',
     method: 'post',
-    data: JSON.stringify(data)
+    data: data
   })
 }
 
-export function getInfo(token) {
-  return request({
-    url: '/api/user',
-    method: 'get',
-    params: { token }
-  })
-}
+// export function getInfo(token) {
+//   return request({
+//     url: '/api/user/info',
+//     method: 'get'
+//     // params: { token }
+//   })
+// }
 
 export function logout() {
   return request({

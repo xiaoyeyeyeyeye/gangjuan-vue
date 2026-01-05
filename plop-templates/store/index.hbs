@@ -1,9 +1,19 @@
 {{#if state}}
-const state = {}
+const state = {
+  token: '',
+  user: {}
+}
 {{/if}}
 
 {{#if mutations}}
-const mutations = {}
+const mutations = {
+  SET_TOKEN(state, token) {
+    state.token = token
+  },
+  SET_USER(state, user) {
+    state.user = user
+  }
+}
 {{/if}}
 
 {{#if actions}}
@@ -12,5 +22,8 @@ const actions = {}
 
 export default {
   namespaced: true,
+  state,
+  mutations,
+  actions,
   {{options}}
 }

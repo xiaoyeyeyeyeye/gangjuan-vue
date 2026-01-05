@@ -1,19 +1,18 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import router, { resetRouter } from '@/router'
+// import router, { resetRouter } from '@/router'
+import { resetRouter } from '@/router'
+// import axios from 'axios'
 
 const state = {
   token: getToken(),
-  name: '',
-  avatar: '',
-  introduction: '',
+  user: {},
   roles: []
 }
 
 const getters = {
   token: state => state.token,
-  name: state => state.name,
-  avatar: state => state.avatar,
+  user: state => state.user,
   roles: state => state.roles
 }
 
@@ -21,64 +20,42 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_INTRODUCTION: (state, introduction) => {
-    state.introduction = introduction
-  },
-  SET_NAME: (state, name) => {
-    state.name = name
-  },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+  SET_USER(state, user) {
+    state.user = user
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
   }
 }
 
+// axios.defaults.withCredentials = true
+
 const actions = {
-  // user login
-  login({ commit }, userInfo) {
-    const { loginId, password } = userInfo
-    console.log('进入user的actions')
-    return new Promise((resolve, reject) => {
-      login({ loginId: loginId.trim(), password: password }).then(response => {
-        console.log('进入user的actions的Promise')
-        console.log('response的内容为', JSON.stringify(response))
-        // 直接使用返回的对象
-        const token = response.token || 'mock-token'
-        if (token) {
-          commit('SET_TOKEN', token)
-          setToken(token)
-          resolve()
-        } else {
-          reject('登录失败：后端未返回 token')
-        }
-      }).catch(error => {
-        reject(error)
-      })
+  async login({ commit }, payload) {
+    const res = await login(payload)
+
+    if (!res) {
+      throw new Error('登录失败，接口未返回数据')
+    }
+    console.log(res)
+
+    const token = res.token
+    if (!token) {
+      throw new Error('登录失败，未返回 token')
+    }
+    commit('SET_TOKEN', token)
+    setToken(token)
+
+    commit('SET_USER', {
+      userId: res.userId,
+      name: res.name,
+      roleId: res.roleId
     })
-  },
 
-  // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const res = response // 根据你的接口，这里就是 {userId, name, roleId, token}
-        if (!res) {
-          return reject('getInfo: 返回数据为空')
-        }
+    const roles = [res.roleId]
+    commit('SET_ROLES', roles)
 
-        const roles = res.roleId === 1 ? ['admin'] : ['user']
-
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', res.name)
-        commit('SET_AVATAR', res.avatar || '')
-        commit('SET_INTRODUCTION', res.introduction || '')
-        resolve(res)
-      }).catch(error => {
-        reject(error)
-      })
-    })
+    return res
   },
 
   // user logout
@@ -109,28 +86,29 @@ const actions = {
       removeToken()
       resolve()
     })
-  },
-
-  // dynamically modify permissions
-  async changeRoles({ commit, dispatch }, role) {
-    const token = role + '-token'
-
-    commit('SET_TOKEN', token)
-    setToken(token)
-
-    const { roles } = await dispatch('getInfo')
-
-    resetRouter()
-
-    // generate accessible routes map based on roles
-    const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
-    // dynamically add accessible routes
-    router.addRoutes(accessRoutes)
-
-    // reset visited views and cached views
-    dispatch('tagsView/delAllViews', null, { root: true })
   }
 }
+
+//   // dynamically modify permissions
+//   async changeRoles({ commit, dispatch }, role) {
+//     const token = role + '-token'
+
+//     commit('SET_TOKEN', token)
+//     setToken(token)
+
+//     const { roles } = await dispatch('getInfo')
+
+//     resetRouter()
+
+//     // generate accessible routes map based on roles
+//     const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
+//     // dynamically add accessible routes
+//     router.addRoutes(accessRoutes)
+
+//     // reset visited views and cached views
+//     dispatch('tagsView/delAllViews', null, { root: true })
+//   }
+// }
 
 // export default {
 //   namespaced: true,

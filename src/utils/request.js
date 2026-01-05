@@ -15,9 +15,9 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    if (store.getters.token) {
-      // 根据后端要求设置token，常见的有Authorization、X-Token等
-      config.headers['Authorization'] = `Bearer ${getToken()}`
+    const token = getToken() || store.getters.token
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`
     }
     return config
   },

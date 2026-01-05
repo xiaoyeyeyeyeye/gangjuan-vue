@@ -31,7 +31,7 @@ module.exports = {
         pathRewrite: { '^/api': '/api' } // 保持路径一致
       }
     },
-    before: require('./mock/mock-server.js')
+    // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     name: name,
