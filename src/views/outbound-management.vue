@@ -37,11 +37,14 @@
         </template>
       </el-table-column>
       <el-table-column label="出库时间" min-width="150px" align="center">
-        <span>2025-05-19 13:54</span>
+        <template slot-scope="{row}">
+          <!-- <span>{{ row.outAt | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
+          <span>{{ row.outAt }}</span>
+        </template>
       </el-table-column>
       <el-table-column label="钢卷编号" min-width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.coil_no }}</span>
+          <span>{{ row.coilNo }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作人" min-width="100px" align="center">
@@ -51,17 +54,17 @@
       </el-table-column>
       <el-table-column label="厂家" min-width="80px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.manufacture_id }}</span>
+          <span>{{ row.manufacturerName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷规格" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.coil_size }}</span>
+          <span>{{ row.coilSize }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前位置" align="center" min-width="180">
         <template slot-scope="{row}">
-          <span>{{ row.location_id }}</span>
+          <span>{{ row.locationId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前坐标" align="center" min-width="130">
@@ -95,13 +98,13 @@
         <!-- 两列布局开始 -->
         <el-row :gutter="24" type="flex" wrap>
           <el-col :span="12">
-            <el-form-item label="出库时间" prop="entry_at">
-              <el-date-picker v-model="temp.entry_at" type="datetime" placeholder="请选择出库时间" />
+            <el-form-item label="出库时间" prop="outAt">
+              <el-date-picker v-model="temp.outAt" type="datetime" placeholder="请选择出库时间" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="钢卷编号" prop="coil_no">
-              <el-input v-model="temp.coil_no" />
+            <el-form-item label="钢卷编号" prop="coilNo">
+              <el-input v-model="temp.coilNo" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -110,20 +113,20 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="厂家" prop="manufacture_id">
-              <el-select v-model="temp.manufacture_id" class="filter-item" placeholder="请选择厂家">
+            <el-form-item label="厂家" prop="manufacturerName">
+              <el-select v-model="temp.manufacturerName" class="filter-item" placeholder="请选择厂家">
                 <el-option v-for="item in manufacture_id_options" :key="item.key" :label="item.display_name" :value="item.key" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="钢卷规格" prop="coil_size">
-              <el-input v-model="temp.coil_size" />
+            <el-form-item label="钢卷规格" prop="coilSize">
+              <el-input v-model="temp.coilSize" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="当前位置" prop="location_id">
-              <el-input v-model="temp.location_id" />
+            <el-form-item label="当前位置" prop="locationId">
+              <el-input v-model="temp.locationId" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -133,8 +136,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="当前状态" prop="status">
-              <!-- <el-input v-model="temp.status" /> -->
-              <el-input placeholder="已出库" />
+              <el-input v-model="temp.status" />
+              <!-- <el-input placeholder="已出库" /> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -279,8 +282,8 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
+        this.list = response.records
+        this.total = response.total
 
         // Just to simulate the time of the request
         setTimeout(() => {
