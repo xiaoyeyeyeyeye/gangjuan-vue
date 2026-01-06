@@ -41,37 +41,39 @@
       </el-table-column>
       <el-table-column label="入库时间" min-width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.entry_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <!-- <span>{{ row.entryAt | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
+          <span>{{ row.entryAt }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出库时间" min-width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.out_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <!-- <span>{{ row.outAt | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
+          <span>{{ row.outAt }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷编号" min-width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.coil_no }}</span>
+          <span>{{ row.coilNo }}</span>
         </template>
       </el-table-column>
       <el-table-column label="厂家" min-width="80px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.manufacture_id }}</span>
+          <span>{{ row.manufacturerName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷规格" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.coil_size }}</span>
+          <span>{{ row.coilSize }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前位置" align="center" min-width="180">
         <template slot-scope="{row}">
-          <span>{{ row.location_id }}</span>
+          <span>{{ row.locationId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前坐标" align="center" min-width="130">
         <template slot-scope="{row}">
-          <span>{{ row.location_xyz }}</span>
+          <span>{{ row.xCoord }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前状态" class-name="status-col" min-width="100">
@@ -84,37 +86,37 @@
 
       <el-table-column label="钢卷名称" align="center" min-width="120">
         <template slot-scope="{row}">
-          <span>{{ row.coil_name }}</span>
+          <span>{{ row.coilName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷牌号" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.coil_grade }}</span>
+          <span>{{ row.coilGrade }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品标准" align="center" min-width="140">
         <template slot-scope="{row}">
-          <span>{{ row.product_standard }}</span>
+          <span>{{ row.productStandard }}</span>
         </template>
       </el-table-column>
       <el-table-column label="熔炼号" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.heat_no }}</span>
+          <span>{{ row.heatNo }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品等级" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.coil_class }}</span>
+          <span>{{ row.coilClass }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷重量（吨）" align="center" min-width="120">
         <template slot-scope="{row}">
-          <span>{{ row.weight_t }}</span>
+          <span>{{ row.weightT }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷重量（千克）" align="center" min-width="100">
         <template slot-scope="{row}">
-          <span>{{ row.weight_kg }}</span>
+          <span>{{ row.weightKg }}</span>
         </template>
       </el-table-column>
       <el-table-column label="张数" align="center" min-width="100">
@@ -129,7 +131,7 @@
       </el-table-column>
       <el-table-column label="合同号" align="center" min-width="120">
         <template slot-scope="{row}">
-          <span>{{ row.contract_no }}</span>
+          <span>{{ row.contractNo }}</span>
         </template>
       </el-table-column>
       <el-table-column label="到站" align="center" min-width="100">
@@ -139,7 +141,7 @@
       </el-table-column>
       <el-table-column label="生产日期" align="center" min-width="140">
         <template slot-scope="{row}">
-          <span>{{ row.date_production }}</span>
+          <span>{{ row.dateProduction }}</span>
         </template>
       </el-table-column>
       <el-table-column label="最终用户" align="center" min-width="170">
@@ -149,7 +151,7 @@
       </el-table-column>
       <el-table-column label="更新时间" align="center" min-width="140">
         <template slot-scope="{row}">
-          <span>{{ row.entry_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.updatedAt | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注信息" align="center" min-width="200">
@@ -177,40 +179,40 @@
         <!-- 两列布局开始 -->
         <el-row :gutter="24" type="flex" wrap>
           <el-col :span="12">
-            <el-form-item label="入库时间" prop="entry_at">
-              <el-date-picker v-model="temp.entry_at" type="datetime" placeholder="请选择入库时间" />
+            <el-form-item label="入库时间" prop="entryAt">
+              <el-date-picker v-model="temp.entryAt" type="datetime" placeholder="请选择入库时间" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="出库时间" prop="entry_at">
-              <el-date-picker v-model="temp.out_at" type="datetime" placeholder="请选择出库时间" />
+            <el-form-item label="出库时间" prop="outAt">
+              <el-date-picker v-model="temp.outAt" type="datetime" placeholder="请选择出库时间" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="钢卷编号" prop="coil_no">
-              <el-input v-model="temp.coil_no" />
+            <el-form-item label="钢卷编号" prop="coilNo">
+              <el-input v-model="temp.coilNo" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="厂家" prop="manufacture_id">
-              <el-select v-model="temp.manufacture_id" class="filter-item" placeholder="请选择厂家">
+            <el-form-item label="厂家" prop="manufacturerName">
+              <el-select v-model="temp.manufacturerName" class="filter-item" placeholder="请选择厂家">
                 <el-option v-for="item in manufacture_id_options" :key="item.key" :label="item.display_name" :value="item.key" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="钢卷规格" prop="coil_size">
-              <el-input v-model="temp.coil_size" />
+            <el-form-item label="钢卷规格" prop="coilSize">
+              <el-input v-model="temp.coilSize" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="当前位置" prop="location_id">
-              <el-input v-model="temp.location_id" />
+            <el-form-item label="当前位置" prop="locationId">
+              <el-input v-model="temp.locationId" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="当前坐标" prop="location_xyz">
-              <el-input v-model="temp.location_xyz" />
+            <el-form-item label="当前坐标" prop="xCoord">
+              <el-input v-model="temp.xCoord" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -219,38 +221,38 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="钢卷名称" prop="coil_name">
-              <el-input v-model="temp.coil_name" />
+            <el-form-item label="钢卷名称" prop="coilName">
+              <el-input v-model="temp.coilName" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="钢卷牌号" prop="coil_grade">
-              <el-input v-model="temp.coil_grade" />
+            <el-form-item label="钢卷牌号" prop="coilGrade">
+              <el-input v-model="temp.coilGrade" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="产品标准" prop="product_standard">
-              <el-input v-model="temp.product_standard" />
+            <el-form-item label="产品标准" prop="productStandard">
+              <el-input v-model="temp.productStandard" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="熔炼号" prop="heat_no">
-              <el-input v-model="temp.heat_no" />
+            <el-form-item label="熔炼号" prop="heatNo">
+              <el-input v-model="temp.heatNo" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="产品等级" prop="coil_class">
-              <el-input v-model="temp.coil_class" />
+            <el-form-item label="产品等级" prop="coilClass">
+              <el-input v-model="temp.coilClass" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="钢卷重量（吨）" prop="weight_t">
-              <el-input v-model="temp.weight_t" />
+            <el-form-item label="钢卷重量（吨）" prop="weightT">
+              <el-input v-model="temp.weightT" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="钢卷重量（千克）" prop="weight_kg">
-              <el-input v-model="temp.weight_kg" />
+            <el-form-item label="钢卷重量（千克）" prop="weightKg">
+              <el-input v-model="temp.weightKg" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -275,8 +277,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="生产日期" prop="date_production">
-              <el-input v-model="temp.date_production" />
+            <el-form-item label="生产日期" prop="dateProduction">
+              <el-input v-model="temp.dateProduction" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -357,11 +359,12 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
-        manufacture_id: undefined,
-        coil_no: undefined,
-        type: undefined,
-        sort: '+id'
+        size: 10
+        // limit: 10,
+        // manufacture_id: undefined,
+        // coil_no: undefined,
+        // type: undefined,
+        // sort: '+id'
       },
       manufacture_id_options: ['柳钢', '攀钢', '首钢', '马钢', '沙钢'],
       calendarTypeOptions,
@@ -427,7 +430,7 @@ export default {
     this.getList()
   },
   mounted() {
-    this.initThreeScene()
+    // this.initThreeScene()
   },
   methods: {
     initThreeScene() {
@@ -549,8 +552,9 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
+        console.log(response)
+        this.list = response.records
+        this.total = response.total
 
         // Just to simulate the time of the request
         setTimeout(() => {
@@ -560,6 +564,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
+      this.listQuery.size = 10
       this.getList()
     },
     handleModifyStatus(row, status) {
@@ -577,9 +582,9 @@ export default {
     },
     sortByID(order) {
       if (order === 'ascending') {
-        this.listQuery.sort = '+id'
+        // this.listQuery.sort = '+id'
       } else {
-        this.listQuery.sort = '-id'
+        // this.listQuery.sort = '-id'
       }
       this.handleFilter()
     },

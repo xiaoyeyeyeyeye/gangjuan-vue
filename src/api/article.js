@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/vue-element-admin/article/list',
+    url: '/api/steel-coil',
     method: 'get',
     params: query
   })
