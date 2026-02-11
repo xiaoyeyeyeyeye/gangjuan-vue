@@ -50,7 +50,7 @@
 </template>
 
 <script>
-// import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
+// import { fetchOverviewList, fetchPv, createArticle, updateArticle } from '@/api/steel-coil'
 import { BrowserMultiFormatReader } from '@zxing/browser'
 // import axios from 'axios'
 

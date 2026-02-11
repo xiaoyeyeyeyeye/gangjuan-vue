@@ -1,0 +1,61 @@
+import request from '@/utils/request'
+
+// 页面初始化
+export function fetchOutboundPage() {
+  return request({
+    url: '/outbound/index',
+    method: 'get'
+  })
+}
+
+// 分页查询出库记录
+export function fetchOutboundList(data) {
+  return request({
+    url: '/outbound/query',
+    method: 'post',
+    data
+  })
+}
+
+// 获取钢卷出库详情
+export function fetchOutboundCoilDetail(coilId) {
+  return request({
+    url: `/outbound/coil/${coilId}`,
+    method: 'get'
+  })
+}
+
+// 执行出库
+export function executeOutbound(data) {
+  return request({
+    url: '/outbound/execute',
+    method: 'post',
+    data
+  })
+}
+
+// 批量出库
+export function batchExecuteOutbound(data) {
+  return request({
+    url: '/outbound/batch-execute',
+    method: 'post',
+    data
+  })
+}
+
+// 撤销出库
+export function cancelOutbound(operationId, operatorId) {
+  return request({
+    url: `/outbound/cancel/${operationId}`,
+    method: 'delete',
+    params: { operatorId }
+  })
+}
+
+// 出库校验
+export function checkOutbound(coilId) {
+  return request({
+    url: `/outbound/check/${coilId}`,
+    method: 'get'
+  })
+}

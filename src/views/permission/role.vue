@@ -149,7 +149,8 @@ export default {
   //   }
   // },
   created() {
-    this.getRoutes()
+    // 后期有角色菜单列表了再打开
+    // this.getRoutes()
     this.getRoles()
   },
   methods: {

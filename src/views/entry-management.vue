@@ -8,8 +8,8 @@
         入库扫码请使用配备的扫描仪，将由摄像头系统自动定位入库。
         可对入库的钢卷进行修改、删除处理，也可以手动新增入库钢卷。
       </aside>
-      <el-input v-model="listQuery.coil_no" placeholder="钢卷编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.manufacture_id" placeholder="厂家" clearable style="width: 90px" class="filter-item">
+      <el-input v-model="listQuery.coilNo" placeholder="钢卷编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.manufacturerName" placeholder="厂家" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in manufacture_id_options" :key="item" :label="item" :value="item" />
       </el-select>
       <el-date-picker v-model="value2" type="datetimerange" clearable class="filter-item" :picker-options="pickerOptions" range-separator="至" start-placeholder="入库开始时间" end-placeholder="入库结束时间" />
@@ -38,8 +38,7 @@
       </el-table-column>
       <el-table-column label="入库时间" min-width="150px" align="center">
         <template slot-scope="{row}">
-          <!-- <span>{{ row.entry_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
-          <span>{{ row.entryAt }}</span>
+          <span>{{ row.entryAt | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="钢卷编号" min-width="150px" align="center">
@@ -69,7 +68,7 @@
       </el-table-column>
       <el-table-column label="当前坐标" align="center" min-width="130">
         <template slot-scope="{row}">
-          <span>{{ row.location_xyz }}</span>
+          <span>{{ row.locationXyz }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前状态" class-name="status-col" min-width="100">
@@ -130,8 +129,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="当前坐标" prop="location_xyz">
-              <el-input v-model="temp.location_xyz" />
+            <el-form-item label="当前坐标" prop="locationXyz">
+              <el-input v-model="temp.locationXyz" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -164,7 +163,12 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import {
+  fetchEntryList,
+  createEntry,
+  updateEntry,
+  deleteEntry
+} from '@/api/entry'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -207,11 +211,11 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        size: 10
-        // importance: undefined,
-        // title: undefined,
-        // type: undefined,
-        // sort: '+id'
+        size: 10,
+        coilNo: '',
+        manufacturerName: '',
+        startTime: '',
+        endTime: ''
       },
       manufacture_id_options: ['柳钢', '攀钢', '首钢', '马钢', '沙钢'],
       calendarTypeOptions,
@@ -219,12 +223,14 @@ export default {
       statusOptions: ['在库', '已出库', '废弃'],
       showReviewer: false,
       temp: {
-        id: undefined,
-        manufacture_id: '柳钢',
-        remark: '',
-        timestamp: new Date(),
-        coil_no: '',
-        type: '',
+        coilId: undefined,
+        entryAt: '',
+        coilNo: '',
+        operator: '',
+        manufacturerName: '',
+        coilSize: '',
+        locationId: '',
+        locationXyz: '',
         status: '在库'
       },
       dialogFormVisible: false,
@@ -236,9 +242,9 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        coil_no: [{ required: true, message: '请输入钢卷编号', trigger: 'blur' }]
+        entryAt: [{ required: true, message: '请选择入库时间', trigger: 'change' }],
+        coilNo: [{ required: true, message: '请输入钢卷编号', trigger: 'blur' }],
+        manufacturerName: [{ required: true, message: '请选择厂家', trigger: 'change' }]
       },
       downloadLoading: false,
 
@@ -279,18 +285,21 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.records
-        this.total = response.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+      fetchEntryList(this.listQuery).then(res => {
+        this.list = res.result.records
+        this.total = res.result.total
+        this.listLoading = false
       })
     },
     handleFilter() {
       this.listQuery.page = 1
+      if (this.value2 && this.value2.length === 2) {
+        this.listQuery.startTime = this.value2[0].toISOString()
+        this.listQuery.endTime = this.value2[1].toISOString()
+      } else {
+        this.listQuery.startTime = ''
+        this.listQuery.endTime = ''
+      }
       this.getList()
     },
     handleModifyStatus(row, status) {
@@ -316,13 +325,15 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        id: undefined,
-        manufacture_id: '柳钢',
-        remark: '',
-        timestamp: new Date(),
-        coil_no: '',
-        status: '在库',
-        type: ''
+        coilId: undefined,
+        entryAt: '',
+        coilNo: '',
+        operator: '',
+        manufacturerName: '',
+        coilSize: '',
+        locationId: '',
+        locationXyz: '',
+        status: '在库'
       }
     },
     handleCreate() {
@@ -336,13 +347,11 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
+          createEntry(this.temp).then(() => {
             this.dialogFormVisible = false
+            this.getList()
             this.$notify({
-              title: 'Success',
+              title: '成功',
               message: '新增成功',
               type: 'success',
               duration: 2000
@@ -353,7 +362,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
+      this.temp.entryAt = new Date(this.temp.entryAt)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -364,11 +373,10 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
+          tempData.entryAt = +new Date(tempData.entryAt) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          updateEntry(tempData.coilId, tempData).then(() => {
             this.dialogFormVisible = false
+            this.getList()
             this.$notify({
               title: '成功',
               message: '更新成功',
@@ -379,38 +387,21 @@ export default {
         }
       })
     },
-    handleDelete(row, index) {
-      this.$notify({
-        title: '成功',
-        message: '撤销成功',
-        type: 'success',
-        duration: 2000
-      })
-      this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
-    },
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
+    handleDelete(row) {
+      this.$confirm('确认撤销该钢卷入库?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteEntry(row.coilId, this.$store.state.user.id).then(() => {
+          this.$message.success('撤销成功')
+          this.getList()
         })
-        this.downloadLoading = false
       })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
+        if (j === 'entryAt') {
           return parseTime(v[j])
         } else {
           return v[j]

@@ -74,7 +74,8 @@ export function logout() {
 
 export function getRoles() {
   return request({
-    url: '/api/user/roles',
+    // url: '/api/user/roles',
+    url: '/api/user/query',
     method: 'get'
   })
 }
