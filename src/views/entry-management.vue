@@ -90,7 +90,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.size" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" class="two-column-form" label-position="left" label-width="120px">
@@ -210,8 +210,8 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
-        page: 1,
-        size: 10,
+        pageNum: 1,
+        pageSize: 10,
         coilNo: '',
         manufacturerName: '',
         startTime: '',
@@ -292,7 +292,7 @@ export default {
       })
     },
     handleFilter() {
-      this.listQuery.page = 1
+      this.listQuery.pageNum = 1
       if (this.value2 && this.value2.length === 2) {
         this.listQuery.startTime = this.value2[0].toISOString()
         this.listQuery.endTime = this.value2[1].toISOString()

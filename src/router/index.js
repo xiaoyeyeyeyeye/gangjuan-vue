@@ -6,9 +6,6 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/layout'
 
-/* Router Modules */
-// import componentsRouter from './modules/components'
-
 export const constantRoutes = [
   {
     path: '/redirect',
@@ -138,7 +135,7 @@ export const asyncRoutes = [
     meta: {
       title: '用户中心',
       icon: 'peoples',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      roles: [1, 2] // 1=admin, 2=editor，支持的角色 ID 列表
     },
     children: [
       {
@@ -147,7 +144,7 @@ export const asyncRoutes = [
         name: 'RolePermission',
         meta: {
           title: '权限分配',
-          roles: ['admin'],
+          roles: [1], // 仅 admin(roleId=1)
           noCache: true
         }
       },

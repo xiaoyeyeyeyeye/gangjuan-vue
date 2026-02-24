@@ -65,8 +65,8 @@
     <pagination
       v-show="total>0"
       :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
+      :page.sync="listQuery.pageNum"
+      :limit.sync="listQuery.pageSize"
       @pagination="getList"
     />
 
@@ -134,8 +134,8 @@ export default {
 
       // 查询条件
       listQuery: {
-        page: 1,
-        limit: 20,
+        pageNum: 1,
+        pageSize: 20,
         roleType: undefined,
         employeeId: undefined,
         username: undefined,
@@ -168,15 +168,15 @@ export default {
       this.rolesList = res.data
     },
     handleFilter() {
-      this.rolesList.page = 1
+      this.listQuery.pageNum = 1
       this.getList()
     },
     getList() {
       this.listLoading = true
       // 构建查询参数
       const params = {
-        page: this.listQuery.page,
-        size: this.listQuery.limit
+        page: this.listQuery.pageNum,
+        size: this.listQuery.pageSize
       }
 
       // 添加筛选条件

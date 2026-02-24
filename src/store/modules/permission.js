@@ -1,16 +1,15 @@
 import { asyncRoutes, constantRoutes } from '@/router'
 
 /**
- * Use meta.role to determine if the current user has permission
- * @param roles
- * @param route
+ * 根据 meta.roles 判断当前用户是否有权限
+ * @param {Array} roles - 用户角色 ID 列表，如 [1]
+ * @param {Object} route - 路由对象
  */
 function hasPermission(roles, route) {
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.includes(role))
-  } else {
-    return true
   }
+  return true
 }
 
 /**

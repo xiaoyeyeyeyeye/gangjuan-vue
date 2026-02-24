@@ -316,7 +316,7 @@ import {
   updateOverview,
   // generateQrCode,
   reprintQrCode
-} from '@/api/steel-coil'
+} from '@/api/overview'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination

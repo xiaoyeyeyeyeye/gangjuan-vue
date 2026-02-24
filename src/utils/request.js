@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Message } from 'element-ui'
+import { Message, MessageBox } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
@@ -33,16 +33,27 @@ service.interceptors.response.use(
     const res = response.data
 
     if (res.code !== 1) {
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-      // Message.error(res.msg || '请求失败')
-      return Promise.reject(new Error(res.msg || 'Error'))
-    } else {
-      return res.result || res.data // ✅ 返回后端的 result
+      // 401 未授权：登录过期，跳转登录页
+      if (res.code === 401) {
+        MessageBox.confirm('登录状态已过期，请重新登录', '确认退出', {
+          confirmButtonText: '重新登录',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          store.dispatch('user/resetToken').then(() => {
+            location.reload()
+          })
+        })
+      } else {
+        Message({
+          message: res.message || res.msg || '请求失败',
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
+      return Promise.reject(new Error(res.message || res.msg || 'Error'))
     }
+    return res.result || res.data
 
     // // 根据后端返回格式调整判断条件
     // // 常见格式1: { code: 200, data: ..., message: 'success' }
@@ -104,12 +115,24 @@ service.interceptors.response.use(
     // }
   },
   error => {
-    console.log('err' + error)
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    // HTTP 401：token 无效或过期
+    if (error.response && error.response.status === 401) {
+      MessageBox.confirm('登录状态已过期，请重新登录', '确认退出', {
+        confirmButtonText: '重新登录',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        store.dispatch('user/resetToken').then(() => {
+          location.reload()
+        })
+      })
+    } else {
+      Message({
+        message: error.message || '网络请求失败',
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
     return Promise.reject(error)
   }
 )
