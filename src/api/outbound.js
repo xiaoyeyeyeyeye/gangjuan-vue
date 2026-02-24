@@ -10,10 +10,22 @@ export function fetchOutboundPage() {
 
 // 分页查询出库记录
 export function fetchOutboundList(data) {
+  const { pageNum, pageSize, startTime, endTime, ...rest } = data
+  const requestData = {
+    page: pageNum ?? 1,
+    size: pageSize ?? 10,
+    ...rest
+  }
+  if (startTime != null) {
+    requestData.startTime = typeof startTime === 'number' ? new Date(startTime).toISOString() : startTime
+  }
+  if (endTime != null) {
+    requestData.endTime = typeof endTime === 'number' ? new Date(endTime).toISOString() : endTime
+  }
   return request({
     url: '/outbound/query',
     method: 'post',
-    data
+    data: requestData
   })
 }
 

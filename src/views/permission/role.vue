@@ -8,13 +8,13 @@
       管理员可以查看账户信息，并进行账户信息更改、手机解绑、密码重置等操作。
     </aside>
 
-    <el-select v-model="rolesList.key" placeholder="角色权限" clearable style="width: 120px" class="filter-item">
-      <el-option v-for="item in role_id_options" :key="item" :label="item" :value="item" />
+    <el-select v-model="listQuery.roleId" placeholder="角色权限" clearable style="width: 120px" class="filter-item">
+      <el-option v-for="item in role_id_options" :key="item.roleId" :label="item.roleName" :value="item.roleId" />
     </el-select>
 
-    <el-input v-model="rolesList.work_number" placeholder="工号" style="width: 150px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
-    <el-input v-model="rolesList.name" placeholder="姓名" style="width: 120px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
-    <el-input v-model="rolesList.phone_number" placeholder="手机号" style="width: 150px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
+    <el-input v-model="listQuery.jobNumber" placeholder="工号" style="width: 150px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
+    <el-input v-model="listQuery.name" placeholder="姓名" style="width: 120px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
+    <el-input v-model="listQuery.phoneNumber" placeholder="手机号" style="width: 150px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
     <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
       查找
     </el-button>
@@ -24,12 +24,12 @@
     <el-table v-loading="listLoading" :data="list" style="width: 100%;margin-top:30px;" border>
       <el-table-column align="center" label="权限类型" min-width="120">
         <template slot-scope="scope">
-          {{ scope.row.key }}
+          {{ scope.row.roleName }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="工号" min-width="120">
         <template slot-scope="scope">
-          {{ scope.row.work_number }}
+          {{ scope.row.jobNumber }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="姓名" min-width="120">
@@ -39,17 +39,7 @@
       </el-table-column>
       <el-table-column align="center" label="手机号" min-width="120">
         <template slot-scope="scope">
-          {{ scope.row.phone_number }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="密码" width="220">
-        <template slot-scope="scope">
-          {{ scope.row.password }}
-        </template>
-      </el-table-column>
-      <el-table-column align="header-center" label="描述" min-width="220">
-        <template slot-scope="scope">
-          {{ scope.row.description }}
+          {{ scope.row.phoneNumber }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作" width="220">
@@ -73,24 +63,21 @@
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'编辑用户':'新建用户'">
       <el-form :model="role" label-width="80px" label-position="left">
         <el-form-item label="角色">
-          <el-select v-model="role.key" placeholder="角色权限" clearable style="width: 120px" class="filter-item">
-            <el-option v-for="item in role_id_options" :key="item" :label="item" :value="item" />
+          <el-select v-model="role.roleId" placeholder="角色权限" clearable style="width: 120px" class="filter-item">
+            <el-option v-for="item in role_id_options" :key="item.roleId" :label="item.roleName" :value="item.roleId" />
           </el-select>
-
         </el-form-item>
         <el-form-item label="工号">
-          <el-input v-model="role.work_number" placeholder="工号" />
+          <el-input v-model="role.jobNumber" placeholder="工号" />
         </el-form-item>
         <el-form-item label="姓名">
           <el-input v-model="role.name" placeholder="姓名" />
         </el-form-item>
         <el-form-item label="手机号">
-          <el-input v-model="role.phone_number" placeholder="手机号" />
-          <el-button type="primary" size="small" @click="handleDelete(scope)">解除绑定</el-button>
+          <el-input v-model="role.phoneNumber" placeholder="手机号" />
         </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="role.phone" placeholder="手机号" />
-          <el-button type="primary" size="small" @click="handleDelete(scope)">重置密码</el-button>
+        <el-form-item v-if="dialogType==='new'" label="密码">
+          <el-input v-model="role.password" type="password" placeholder="密码（选填，默认123456）" />
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
@@ -104,15 +91,15 @@
 <script>
 import path from 'path'
 import { deepClone } from '@/utils'
-import { getRoutes, getRoles, addUser, deleteUser } from '@/api/role'
+import { queryUsers, getAllRoles, addUser, updateUser, deleteUser } from '@/api/role'
 
 const defaultRole = {
-  key: '',
-  work_number: '',
-  phone_number: '',
+  userId: undefined,
+  roleId: undefined,
+  jobNumber: '',
+  phoneNumber: '',
   name: '',
-  description: '',
-  routes: []
+  password: ''
 }
 
 export default {
@@ -120,7 +107,7 @@ export default {
     return {
       role: Object.assign({}, defaultRole),
       routes: [],
-      rolesList: [],
+      list: [],
       listLoading: false,
       total: 0,
       dialogVisible: false,
@@ -130,42 +117,31 @@ export default {
         children: 'children',
         label: 'title'
       },
-      role_id_options: ['admin', 'worker', 'device'],
+      role_id_options: [],
 
       // 查询条件
       listQuery: {
         pageNum: 1,
         pageSize: 20,
-        roleType: undefined,
-        employeeId: undefined,
-        username: undefined,
-        phone: undefined
+        roleId: undefined,
+        jobNumber: undefined,
+        name: undefined,
+        phoneNumber: undefined
       }
     }
   },
-  // computed: {
-  //   routesData() {
-  //     return this.routes
-  //   }
-  // },
   created() {
-    // 后期有角色菜单列表了再打开
-    // this.getRoutes()
-    this.getRoles()
+    this.fetchRoleOptions()
+    this.getList()
   },
   methods: {
-    async getRoutes() {
+    async fetchRoleOptions() {
       try {
-        const res = await getRoutes()
-        this.serviceRoutes = res.data
-        this.routes = this.generateRoutes(res.data)
+        const res = await getAllRoles()
+        this.role_id_options = res || []
       } catch (error) {
-        console.error('获取路由失败:', error)
+        console.error('获取角色列表失败:', error)
       }
-    },
-    async getRoles() {
-      const res = await getRoles()
-      this.rolesList = res.data
     },
     handleFilter() {
       this.listQuery.pageNum = 1
@@ -173,21 +149,19 @@ export default {
     },
     getList() {
       this.listLoading = true
-      // 构建查询参数
       const params = {
         page: this.listQuery.pageNum,
-        size: this.listQuery.pageSize
+        size: this.listQuery.pageSize,
+        roleId: this.listQuery.roleId,
+        jobNumber: this.listQuery.jobNumber,
+        name: this.listQuery.name,
+        phoneNumber: this.listQuery.phoneNumber
       }
 
-      // 添加筛选条件
-      if (this.listQuery.roleType) params.roleType = this.listQuery.roleType
-      if (this.listQuery.employeeId) params.employeeId = this.listQuery.employeeId
-      if (this.listQuery.username) params.username = this.listQuery.username
-      if (this.listQuery.phone) params.phone = this.listQuery.phone
-
-      getRoles(params).then(response => {
-        this.rolesList = response.data.list || response.data.items || response.data
-        this.total = response.data.total || this.rolesList.length
+      queryUsers(params).then(response => {
+        const pageData = response.records !== undefined ? response : (response.pageInfo || response)
+        this.list = pageData.records || pageData.data || []
+        this.total = pageData.total || 0
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -203,29 +177,26 @@ export default {
     handleEdit(scope) {
       this.dialogType = 'edit'
       this.dialogVisible = true
-      // 根据后端字段映射
+      const row = scope.row
       this.role = deepClone({
-        id: scope.row.id, // 添加id字段
-        roleType: scope.row.roleType || scope.row.key,
-        employeeId: scope.row.employeeId || scope.row.number,
-        username: scope.row.username || scope.row.name,
-        phone: scope.row.phone,
-        description: scope.row.description
+        userId: row.userId,
+        roleId: row.roleId,
+        jobNumber: row.jobNumber,
+        phoneNumber: row.phoneNumber,
+        name: row.name
       })
     },
 
     async handleDelete({ $index, row }) {
       try {
-        await this.$confirm('确认删除该角色?', '提示', {
+        await this.$confirm('确认删除该用户?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
 
-        // 使用id而不是key
-        const id = row.id || row.key
-        await deleteUser(id)
-        this.rolesList.splice($index, 1)
+        await deleteUser(row.userId)
+        this.list.splice($index, 1)
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -285,18 +256,15 @@ export default {
         const isEdit = this.dialogType === 'edit'
 
         if (isEdit) {
-          // await updateRole(this.role.id, this.role)
-          // 更新本地数据
-          const index = this.rolesList.findIndex(item => item.id === this.role.id)
-          if (index > -1) {
-            this.rolesList.splice(index, 1, { ...this.rolesList[index], ...this.role })
-          }
+          const { userId, roleId, jobNumber, phoneNumber, name } = this.role
+          await updateUser(userId, { roleId, jobNumber, phoneNumber, name })
         } else {
-          const { data } = await addUser(this.role)
-          this.rolesList.push(data)
+          const { roleId, jobNumber, phoneNumber, name, password } = this.role
+          await addUser({ roleId, jobNumber, phoneNumber, name, password })
         }
 
         this.dialogVisible = false
+        this.getList()
         this.$notify({
           title: '成功',
           message: `${isEdit ? '更新' : '创建'}成功`,

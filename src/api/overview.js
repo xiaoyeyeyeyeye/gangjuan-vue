@@ -44,6 +44,15 @@ export function generateQrCode(coilId) {
   })
 }
 
+// 快速搜索
+export function fetchOverviewSearch(keyword, pageNum = 1, pageSize = 10) {
+  return request({
+    url: '/api/overview/search',
+    method: 'get',
+    params: { keyword, pageNum, pageSize }
+  })
+}
+
 // 二维码补打
 export function reprintQrCode(coilId, reason) {
   return request({

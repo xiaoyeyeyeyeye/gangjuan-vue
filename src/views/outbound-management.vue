@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column label="操作人" min-width="100px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.operator }}</span>
+          <span>{{ row.operatorName || row.operator }}</span>
         </template>
       </el-table-column>
       <el-table-column label="厂家" min-width="80px" align="center">
@@ -64,12 +64,12 @@
       </el-table-column>
       <el-table-column label="当前位置" align="center" min-width="180">
         <template slot-scope="{row}">
-          <span>{{ row.locationId }}</span>
+          <span>{{ row.locationName || row.locationId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前坐标" align="center" min-width="130">
         <template slot-scope="{row}">
-          <span>{{ row.locationXyz }}</span>
+          <span>{{ row.locationXyz || row.locationName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前状态" class-name="status-col" min-width="100">
@@ -297,8 +297,8 @@ export default {
         params.endTime = this.value2[1].getTime()
       }
       fetchOutboundList(params).then(res => {
-        this.list = res.data.records || []
-        this.total = res.data.total || 0
+        this.list = res.data || []
+        this.total = res.total || 0
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -358,6 +358,10 @@ export default {
       })
     },
     handleDelete(row, index) {
+      if (!row.operationId) {
+        this.$message.error('无法撤销：缺少操作记录ID')
+        return
+      }
       this.$confirm('确认撤销该钢卷出库记录吗？', '提示', {
         type: 'warning'
       }).then(() => {

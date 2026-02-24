@@ -21,14 +21,14 @@
         <el-card class="coil-card">
           <h3>钢卷信息</h3>
           <p v-if="scanResult">
-            <strong>ID:</strong> {{ scanResult.id }}
+            <strong>编号:</strong> {{ scanResult.coilNo || scanResult.id }}
           </p>
           <p v-else>
             <strong>请扫码</strong>
           </p>
           <div v-if="scanResult">
             <p><strong>规格:</strong> {{ scanResult.spec }}</p>
-            <p><strong>位置:</strong> {{ scanResult.location }}</p>
+            <p><strong>位置/状态:</strong> {{ scanResult.location }}</p>
           </div>
           <!-- 操作按钮 -->
           <div class="btn-group">
@@ -50,9 +50,10 @@
 </template>
 
 <script>
-// import { fetchOverviewList, fetchPv, createArticle, updateArticle } from '@/api/steel-coil'
 import { BrowserMultiFormatReader } from '@zxing/browser'
-// import axios from 'axios'
+import { fetchOverviewDetail, fetchOverviewSearch } from '@/api/overview'
+import { createEntry } from '@/api/entry'
+import { executeOutbound } from '@/api/outbound'
 
 export default {
   name: 'ScanPage',
@@ -85,7 +86,6 @@ export default {
           this.$refs.videoRef,
           (result, err) => {
             if (result) {
-              // 扫码成功
               const id = result.getText()
               this.fetchCoilInfo(id)
               this.$message.success(`扫码成功: ${id}`)
@@ -101,18 +101,33 @@ export default {
       }
     },
 
-    // 模拟调用后端接口获取钢卷信息
     async fetchCoilInfo(id) {
       try {
-        // 替换成后端接口
-        // const { data } = await axios.get(`/api/coils/${id}`);
-        // this.scanResult = data;
-
-        // mock 数据
-        this.scanResult = {
-          id,
-          spec: 'Q235B / 3.0mm',
-          location: '仓位 B1-05'
+        const numId = Number(id)
+        if (!isNaN(numId) && numId > 0) {
+          const res = await fetchOverviewDetail(numId)
+          if (res) {
+            this.scanResult = {
+              id: res.coilId,
+              coilNo: res.coilNo,
+              spec: res.coilSize || res.coilGrade || '-',
+              location: res.zoneName || res.status || '-'
+            }
+            return
+          }
+        }
+        const searchRes = await fetchOverviewSearch(id, 1, 10)
+        const records = searchRes?.records || searchRes?.pageInfo?.records || []
+        if (records.length > 0) {
+          const r = records[0]
+          this.scanResult = {
+            id: r.coilId,
+            coilNo: r.coilNo,
+            spec: r.coilSize || r.coilGrade || '-',
+            location: r.zoneName || r.status || '-'
+          }
+        } else {
+          this.scanResult = { id, coilNo: id, spec: '-', location: '请录入或选择出库' }
         }
       } catch (e) {
         this.$message.error('获取钢卷信息失败')
@@ -122,9 +137,12 @@ export default {
     async handleInbound() {
       if (!this.scanResult) return this.$message.warning('请先扫码')
       try {
-        // 调用后端接口（入库）
-        // await axios.post("/api/inbound", { coilId: this.scanResult.id });
-        this.$message.success(`钢卷 ${this.scanResult.id} 入库成功`)
+        await createEntry({
+          coilNo: this.scanResult.coilNo || this.scanResult.id,
+          operatorId: this.$store.getters.userId
+        })
+        this.$message.success(`钢卷 ${this.scanResult.coilNo || this.scanResult.id} 入库成功`)
+        this.scanResult = null
       } catch (e) {
         this.$message.error('入库失败')
       }
@@ -132,10 +150,15 @@ export default {
 
     async handleOutbound() {
       if (!this.scanResult) return this.$message.warning('请先扫码')
+      const coilId = this.scanResult.id
+      if (!coilId) return this.$message.error('钢卷ID无效')
       try {
-        // 调用后端接口（出库）
-        // await axios.post("/api/outbound", { coilId: this.scanResult.id });
-        this.$message.success(`钢卷 ${this.scanResult.id} 出库成功`)
+        await executeOutbound({
+          coilId,
+          operatorId: this.$store.getters.userId
+        })
+        this.$message.success(`钢卷 ${this.scanResult.coilNo || coilId} 出库成功`)
+        this.scanResult = null
       } catch (e) {
         this.$message.error('出库失败')
       }

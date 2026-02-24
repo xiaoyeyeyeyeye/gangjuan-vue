@@ -1,4 +1,4 @@
-import { login, logout } from '@/api/user'
+import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 // import router, { resetRouter } from '@/router'
 import { resetRouter } from '@/router'
@@ -32,21 +32,26 @@ const mutations = {
 
 const actions = {
   async getInfo({ commit }) {
-    // 从 token 解析 or 本地恢复
     const token = getToken()
     if (!token) {
       throw new Error('token 不存在')
     }
 
-    // 从 localStorage / cookie 恢复
-    const user = JSON.parse(localStorage.getItem('user'))
+    const res = await getInfo()
+    if (!res) {
+      throw new Error('获取用户信息失败')
+    }
 
-    if (!user) {
-      throw new Error('用户信息不存在')
+    const user = {
+      userId: res.userId,
+      name: res.name,
+      roleId: res.roleId
     }
 
     commit('SET_USER', user)
-    commit('SET_ROLES', [user.roleId])
+    commit('SET_ROLES', [res.roleId])
+
+    localStorage.setItem('user', JSON.stringify(user))
 
     return user
   },

@@ -8,13 +8,12 @@ export function login(data) {
   })
 }
 
-// export function getInfo(token) {
-//   return request({
-//     url: '/api/user/info',
-//     method: 'get'
-//     // params: { token }
-//   })
-// }
+export function getInfo() {
+  return request({
+    url: '/api/user/info',
+    method: 'get'
+  })
+}
 
 export function logout() {
   return request({

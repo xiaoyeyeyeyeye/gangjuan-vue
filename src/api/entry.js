@@ -15,13 +15,14 @@ export function fetchEntryPage() {
 }
 
 export function fetchEntryList(data) {
-  // 前端统一使用 pageNum/pageSize，入库接口需要 page/size
   const { pageNum, pageSize, ...rest } = data
   const requestData = {
     page: pageNum ?? 1,
     size: pageSize ?? 10,
+    manufacturerId: data.manufacturerId || rest.manufacturerId,
     ...rest
   }
+  delete requestData.manufacturerName // 后端只收 manufacturerId
   return request({
     url: '/entry/query',
     method: 'post',

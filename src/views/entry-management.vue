@@ -10,7 +10,7 @@
       </aside>
       <el-input v-model="listQuery.coilNo" placeholder="钢卷编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.manufacturerName" placeholder="厂家" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in manufacture_id_options" :key="item" :label="item" :value="item" />
+        <el-option v-for="item in manufacture_id_options" :key="item.key" :label="item.display_name" :value="item.display_name" />
       </el-select>
       <el-date-picker v-model="value2" type="datetimerange" clearable class="filter-item" :picker-options="pickerOptions" range-separator="至" start-placeholder="入库开始时间" end-placeholder="入库结束时间" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -48,7 +48,7 @@
       </el-table-column>
       <el-table-column label="操作人" min-width="100px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.operator }}</span>
+          <span>{{ row.operatorName || row.operator }}</span>
         </template>
       </el-table-column>
       <el-table-column label="厂家" min-width="80px" align="center">
@@ -63,12 +63,12 @@
       </el-table-column>
       <el-table-column label="当前位置" align="center" min-width="180">
         <template slot-scope="{row}">
-          <span>{{ row.locationId }}</span>
+          <span>{{ row.locationName || row.locationId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前坐标" align="center" min-width="130">
         <template slot-scope="{row}">
-          <span>{{ row.locationXyz }}</span>
+          <span>{{ row.locationXyz || (row.xNumber != null ? `(${row.xNumber},${row.yNumber || ''},${row.zNumber || ''})` : '') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前状态" class-name="status-col" min-width="100">
@@ -164,6 +164,7 @@
 
 <script>
 import {
+  fetchEntryPage,
   fetchEntryList,
   createEntry,
   updateEntry,
@@ -214,10 +215,12 @@ export default {
         pageSize: 10,
         coilNo: '',
         manufacturerName: '',
+        manufacturerId: null,
         startTime: '',
         endTime: ''
       },
-      manufacture_id_options: ['柳钢', '攀钢', '首钢', '马钢', '沙钢'],
+      manufacture_id_options: [],
+      manufacturerMap: {},
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['在库', '已出库', '废弃'],
@@ -280,26 +283,45 @@ export default {
     }
   },
   created() {
+    this.loadEntryPageData()
     this.getList()
   },
   methods: {
+    loadEntryPageData() {
+      const defaults = [{ manufacturerId: 1, manufacturerName: '柳钢' }, { manufacturerId: 2, manufacturerName: '攀钢' }, { manufacturerId: 3, manufacturerName: '首钢' }, { manufacturerId: 4, manufacturerName: '马钢' }, { manufacturerId: 5, manufacturerName: '沙钢' }]
+      fetchEntryPage().then(res => {
+        const manufacturers = (res && res.manufacturers && res.manufacturers.length) ? res.manufacturers : defaults
+        this.manufacture_id_options = manufacturers.map(m => ({
+          key: m.manufacturerId,
+          display_name: m.manufacturerName || m.manufacturerDescription
+        }))
+        this.manufacturerMap = manufacturers.reduce((acc, m) => {
+          acc[m.manufacturerName] = m.manufacturerId
+          return acc
+        }, {})
+      }).catch(() => {
+        this.manufacture_id_options = defaults.map(m => ({ key: m.manufacturerId, display_name: m.manufacturerName }))
+        this.manufacturerMap = defaults.reduce((acc, m) => { acc[m.manufacturerName] = m.manufacturerId; return acc }, {})
+      })
+    },
     getList() {
       this.listLoading = true
       fetchEntryList(this.listQuery).then(res => {
-        this.list = res.result.records
-        this.total = res.result.total
+        this.list = res.data || []
+        this.total = res.total || 0
         this.listLoading = false
       })
     },
     handleFilter() {
       this.listQuery.pageNum = 1
       if (this.value2 && this.value2.length === 2) {
-        this.listQuery.startTime = this.value2[0].toISOString()
-        this.listQuery.endTime = this.value2[1].toISOString()
+        this.listQuery.startTime = this.value2[0].toISOString ? this.value2[0].toISOString() : this.value2[0]
+        this.listQuery.endTime = this.value2[1].toISOString ? this.value2[1].toISOString() : this.value2[1]
       } else {
         this.listQuery.startTime = ''
         this.listQuery.endTime = ''
       }
+      this.listQuery.manufacturerId = this.manufacturerMap[this.listQuery.manufacturerName] || null
       this.getList()
     },
     handleModifyStatus(row, status) {
@@ -347,7 +369,12 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createEntry(this.temp).then(() => {
+          const submitData = {
+            ...this.temp,
+            manufacturerId: this.manufacturerMap[this.temp.manufacturerName] || null,
+            operatorId: this.$store.getters.userId
+          }
+          createEntry(submitData).then(() => {
             this.dialogFormVisible = false
             this.getList()
             this.$notify({
@@ -373,7 +400,8 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.entryAt = +new Date(tempData.entryAt) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          tempData.entryAt = tempData.entryAt ? (tempData.entryAt.toISOString ? tempData.entryAt.toISOString() : tempData.entryAt) : null
+          tempData.manufacturerId = this.manufacturerMap[tempData.manufacturerName] || tempData.manufacturerId
           updateEntry(tempData.coilId, tempData).then(() => {
             this.dialogFormVisible = false
             this.getList()
@@ -393,7 +421,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteEntry(row.coilId, this.$store.state.user.id).then(() => {
+        deleteEntry(row.coilId, this.$store.getters.userId).then(() => {
           this.$message.success('撤销成功')
           this.getList()
         })

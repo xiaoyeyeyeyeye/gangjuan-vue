@@ -370,10 +370,10 @@ export default {
         pageSize: 10,
         coilNo: '',
         manufacturerName: '',
-        entryStart: '',
-        entryEnd: '',
-        outStart: '',
-        outEnd: ''
+        entryStartTime: '',
+        entryEndTime: '',
+        outStartTime: '',
+        outEndTime: ''
       },
 
       manufacture_id_options: ['柳钢', '攀钢', '首钢', '马钢', '沙钢'],
@@ -587,27 +587,27 @@ export default {
     getList() {
       this.listLoading = true
       fetchOverviewList(this.listQuery).then(res => {
-        const data = res.result
-        this.list = data.records
-        this.total = data.total
+        const pageInfo = res.pageInfo || res
+        this.list = pageInfo.records || []
+        this.total = pageInfo.total || 0
         this.listLoading = false
       })
     },
     handleFilter() {
       if (this.entryTimeRange?.length === 2) {
-        this.listQuery.entryStart = this.entryTimeRange[0]
-        this.listQuery.entryEnd = this.entryTimeRange[1]
+        this.listQuery.entryStartTime = this.entryTimeRange[0]
+        this.listQuery.entryEndTime = this.entryTimeRange[1]
       } else {
-        this.listQuery.entryStart = ''
-        this.listQuery.entryEnd = ''
+        this.listQuery.entryStartTime = ''
+        this.listQuery.entryEndTime = ''
       }
 
       if (this.outTimeRange?.length === 2) {
-        this.listQuery.outStart = this.outTimeRange[0]
-        this.listQuery.outEnd = this.outTimeRange[1]
+        this.listQuery.outStartTime = this.outTimeRange[0]
+        this.listQuery.outEndTime = this.outTimeRange[1]
       } else {
-        this.listQuery.outStart = ''
-        this.listQuery.outEnd = ''
+        this.listQuery.outStartTime = ''
+        this.listQuery.outEndTime = ''
       }
 
       this.listQuery.pageNum = 1
@@ -707,7 +707,7 @@ export default {
       }).then(() => {
         reprintQrCode(row.coilId, '前端补打').then(() => {
           this.$message.success('二维码补打成功')
-          window.open(`/api/overview/${row.coilId}/qrcode`)
+          window.open(`${process.env.VUE_APP_BASE_API || ''}/api/overview/${row.coilId}/qrcode`)
         })
       })
     },
